@@ -1,488 +1,665 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>夜城传说：霓虹偶像帝国</title>
-    <!-- 引入科技感字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>夜城挑战：夺取 PS5</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --neon-blue: #00f3ff;
-            --neon-pink: #ff0055;
-            --neon-yellow: #fcee0a;
-            --bg-dark: #050505;
-            --glass-bg: rgba(20, 20, 30, 0.7);
-            --border-glow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
-        }
+      :root {
+        --neon-gold: #ffd700;
+        --neon-red: #ff003c;
+        --neon-blue: #00f3ff;
+        --bg-color: #050505;
+        --glass: rgba(20, 20, 20, 0.95);
+      }
 
-        * { box-sizing: border-box; user-select: none; }
+      * {
+        box-sizing: border-box;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        margin: 0;
+        background: var(--bg-color);
+        font-family: "Rajdhani", sans-serif;
+        height: 100vh;
+        overflow: hidden;
+        color: white;
+        display: flex;
+        flex-direction: column;
+      }
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-dark);
-            color: white;
-            font-family: 'Rajdhani', sans-serif;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+      /* 背景 */
+      .bg-grid {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+        background-size: 40px 40px;
+        transform: perspective(500px) rotateX(60deg) translateY(-100px)
+          translateZ(-200px);
+        z-index: -2;
+        opacity: 0.5;
+      }
 
-        /* 背景层：包含场景图和网格动画 */
-        .scene-background {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2;
-            background-size: cover;
-            background-position: center;
-            transition: background-image 0.5s ease;
-            filter: brightness(0.4) contrast(1.2);
-        }
+      /* 顶部 */
+      .header-zone {
+        padding: 10px 15px;
+        z-index: 10;
+      }
+      .rank-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0, 20, 40, 0.8);
+        border: 1px solid var(--neon-blue);
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+      }
+      .rank-value {
+        font-family: "Orbitron";
+        font-size: 1.5rem;
+        color: white;
+        text-shadow: 0 0 5px var(--neon-blue);
+      }
+      .prize-img-small {
+        height: 50px;
+        width: auto;
+        filter: drop-shadow(0 0 5px var(--neon-blue));
+      }
 
-        /* 赛博朋克网格覆盖 */
-        .grid-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
-            background-size: 40px 40px;
-            perspective: 500px;
-            box-shadow: inset 0 0 100px #000;
-        }
+      /* 进度条 (12格) */
+      .progress-track {
+        display: flex;
+        gap: 2px;
+        padding: 5px 15px;
+        margin-bottom: 5px;
+      }
+      .progress-dot {
+        flex: 1;
+        height: 8px;
+        background: #333;
+        border-radius: 2px;
+      }
+      .progress-dot.active {
+        background: var(--neon-gold);
+        box-shadow: 0 0 5px var(--neon-gold);
+      }
 
-        /* 扫描线特效 */
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
-            background-size: 100% 4px;
-            z-index: 10;
-            pointer-events: none;
-            opacity: 0.6;
-        }
+      /* 数值条 */
+      .stats-bar {
+        display: flex;
+        gap: 5px;
+        padding: 0 15px;
+        height: 6px;
+        width: 100%;
+      }
+      .stat-pill {
+        flex: 1;
+        background: #222;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .stat-fill {
+        height: 100%;
+        width: 50%;
+        transition: width 0.3s;
+      }
 
-        /* UI 容器 */
-        .main-interface {
-            width: 100%;
-            max-width: 500px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-            z-index: 2;
-            position: relative;
-        }
+      /* 游戏卡片 */
+      .game-area {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        perspective: 1000px;
+      }
+      .card {
+        width: 100%;
+        max-width: 400px;
+        height: 100%;
+        max-height: 520px;
+        background: var(--glass);
+        border: 2px solid var(--neon-blue);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
+      }
+      .card-visual {
+        flex: 3;
+        position: relative;
+        overflow: hidden;
+        margin: 5px;
+        border-radius: 8px;
+        background: black;
+      }
+      .card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.9;
+      }
+      .card-text {
+        flex: 2;
+        padding: 15px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
 
-        /* 顶部 HUD (数值栏) */
-        .hud-top {
-            display: flex;
-            justify-content: space-between;
-            background: var(--glass-bg);
-            border: 1px solid var(--neon-blue);
-            padding: 10px;
-            backdrop-filter: blur(5px);
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+      /* 按钮 */
+      .controls {
+        display: flex;
+        gap: 10px;
+        padding: 15px;
+        width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+      .btn {
+        flex: 1;
+        padding: 20px;
+        border: none;
+        font-family: "Orbitron";
+        font-weight: bold;
+        font-size: 1rem;
+        color: black;
+        clip-path: polygon(
+          10px 0,
+          100% 0,
+          100% calc(100% - 10px),
+          calc(100% - 10px) 100%,
+          0 100%,
+          0 10px
+        );
+        cursor: pointer;
+      }
+      .btn-l {
+        background: var(--neon-red);
+        color: white;
+      }
+      .btn-r {
+        background: var(--neon-blue);
+        color: black;
+      }
+      .btn-pay {
+        background: var(--neon-gold);
+        color: black;
+        width: 100%;
+        margin-top: 15px;
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
         }
+        50% {
+          transform: scale(1.02);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
 
-        .stat-item {
-            text-align: center;
-            width: 22%;
-        }
-        .stat-label { font-size: 0.8rem; color: var(--neon-blue); letter-spacing: 1px; }
-        .stat-bar-container {
-            height: 6px;
-            background: #333;
-            margin-top: 5px;
-            position: relative;
-            overflow: hidden;
-        }
-        .stat-bar-fill {
-            height: 100%;
-            background: var(--neon-pink);
-            box-shadow: 0 0 5px var(--neon-pink);
-            transition: width 0.3s ease;
-        }
+      /* 通用弹窗 */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.98);
+        z-index: 100;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 30px;
+      }
 
-        /* 中间卡片区域 */
-        .card-container {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
+      /* 输入框样式 */
+      .input-group {
+        width: 100%;
+        margin: 10px 0;
+        text-align: left;
+      }
+      .input-field {
+        width: 100%;
+        padding: 12px;
+        background: #111;
+        border: 1px solid var(--neon-blue);
+        color: white;
+        font-family: "Rajdhani";
+        margin-top: 5px;
+        outline: none;
+      }
 
-        .hologram-card {
-            width: 100%;
-            background: rgba(10, 10, 15, 0.85);
-            border: 2px solid var(--neon-pink);
-            padding: 0;
-            position: relative;
-            box-shadow: 0 0 20px rgba(255, 0, 85, 0.3);
-            backdrop-filter: blur(10px);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s;
-        }
-
-        /* 角色图区域 */
-        .character-frame {
-            width: 100%;
-            height: 300px;
-            background: #000;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .character-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 保持比例填充 */
-            object-position: top center;
-        }
-
-        .card-content {
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid var(--neon-pink);
-        }
-
-        .card-title {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--neon-yellow);
-            margin: 0 0 10px 0;
-            font-size: 1.4rem;
-            text-transform: uppercase;
-            text-shadow: 0 0 5px var(--neon-yellow);
-        }
-
-        .card-text {
-            font-size: 1.1rem;
-            line-height: 1.5;
-            color: #eee;
-        }
-
-        /* 按钮区域 */
-        .control-panel {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .cyber-btn {
-            flex: 1;
-            padding: 20px 10px;
-            background: transparent;
-            border: 2px solid;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            color: white;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
-        }
-
-        .btn-left {
-            border-color: var(--neon-blue);
-            color: var(--neon-blue);
-            text-align: left;
-            padding-left: 20px;
-        }
-        .btn-left:hover {
-            background: var(--neon-blue);
-            color: black;
-            box-shadow: 0 0 15px var(--neon-blue);
-        }
-
-        .btn-right {
-            border-color: var(--neon-pink);
-            color: var(--neon-pink);
-            text-align: right;
-            padding-right: 20px;
-        }
-        .btn-right:hover {
-            background: var(--neon-pink);
-            color: white;
-            box-shadow: 0 0 15px var(--neon-pink);
-        }
-
-        /* 结局弹窗 */
-        #game-over {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 100;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-        .glitch-text {
-            font-family: 'Orbitron';
-            font-size: 3rem;
-            color: red;
-            text-shadow: 2px 2px var(--neon-blue);
-            animation: glitch 1s infinite;
-        }
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
-
+      /* 支付二维码模拟 */
+      .qr-placeholder {
+        width: 200px;
+        height: 200px;
+        background: white;
+        margin: 20px auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: black;
+        font-weight: bold;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div class="bg-grid"></div>
 
-    <!-- 动态背景层 (场景图) -->
-    <div class="scene-background" id="bg-layer" style="background-image: url('https://placehold.co/800x600/111/444?text=Night+City+View');"></div>
-    <div class="grid-overlay"></div>
-    <div class="scanlines"></div>
-
-    <div class="main-interface">
-        
-        <!-- 顶部数值 HUD -->
-        <div class="hud-top">
-            <div class="stat-item">
-                <div class="stat-label">CREDITS(资)</div>
-                <div class="stat-bar-container"><div id="bar-money" class="stat-bar-fill" style="width: 50%; background: #ffd700;"></div></div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">HYPE(热)</div>
-                <div class="stat-bar-container"><div id="bar-fame" class="stat-bar-fill" style="width: 50%; background: #ff4500;"></div></div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">VIBE(颜)</div>
-                <div class="stat-bar-container"><div id="bar-looks" class="stat-bar-fill" style="width: 50%; background: #ff00ff;"></div></div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">SYNC(律)</div>
-                <div class="stat-bar-container"><div id="bar-ethics" class="stat-bar-fill" style="width: 50%; background: #00f3ff;"></div></div>
-            </div>
+    <div class="header-zone">
+      <div class="rank-card">
+        <div>
+          <div style="font-size: 0.7rem; color: #aaa">
+            距离大奖还差
+            <span
+              id="weeks-left"
+              style="color: var(--neon-gold); font-size: 1.2rem"
+              >12</span
+            >
+            关
+          </div>
+          <div class="rank-value" id="rank-display">Level 0</div>
         </div>
-
-        <!-- 卡片交互区 -->
-        <div class="card-container">
-            <div class="hologram-card" id="card-element">
-                <!-- 角色图片 -->
-                <div class="character-frame">
-                    <img id="char-img" class="character-img" src="" alt="Character">
-                </div>
-                <div class="card-content">
-                    <h2 id="card-title" class="card-title">EVENT LOG</h2>
-                    <p id="card-desc" class="card-text">Loading data stream...</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 按钮 -->
-        <div class="control-panel">
-            <button class="cyber-btn btn-left" id="btn-left" onclick="makeChoice('left')">REJECT</button>
-            <button class="cyber-btn btn-right" id="btn-right" onclick="makeChoice('right')">ACCEPT</button>
-        </div>
+        <img
+          src="https://gmedia.playstation.com/is/image/SIEPDC/ps5-product-thumbnail-01-en-14sep21?$facebook$"
+          class="prize-img-small"
+        />
+      </div>
     </div>
 
-    <!-- 结局画面 -->
-    <div id="game-over">
-        <h1 class="glitch-text">SYSTEM FAILURE</h1>
-        <p id="end-reason" style="color:#00f3ff; max-width: 80%; line-height: 1.6;">Connection Lost.</p>
-        <button class="cyber-btn" style="margin-top: 30px; border-color:white;" onclick="restartGame()">REBOOT SYSTEM</button>
+    <!-- 12级进度条 -->
+    <div class="progress-track" id="progress-container">
+      <!-- JS生成 -->
     </div>
 
-<script>
-    // --- 游戏配置 ---
-    let stats = { money: 50, fame: 50, looks: 50, ethics: 50 };
-    let weeks = 0;
-    let currentCard = {};
+    <div class="stats-bar">
+      <div class="stat-pill">
+        <div id="bar-1" class="stat-fill" style="background: #ffd700"></div>
+      </div>
+      <div class="stat-pill">
+        <div id="bar-2" class="stat-fill" style="background: #ff4500"></div>
+      </div>
+      <div class="stat-pill">
+        <div id="bar-3" class="stat-fill" style="background: #bc13fe"></div>
+      </div>
+      <div class="stat-pill">
+        <div id="bar-4" class="stat-fill" style="background: #00f3ff"></div>
+      </div>
+    </div>
 
-    /* 
-       ================================================================
-       在此处替换你的图片！
-       bg: 背景场景图链接
-       img: 角色/事件图链接
-       你可以使用本地图片 (例如 'images/girl1.jpg') 
-       或者网络图片链接。
-       ================================================================
-    */
-    const defaultBg = "https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=1000&auto=format&fit=crop"; // 夜景街道
+    <div class="game-area">
+      <div class="card" id="game-card">
+        <div class="card-visual">
+          <img id="card-img" class="card-img" src="" alt="" />
+        </div>
+        <div class="card-text">
+          <h2
+            id="card-title"
+            style="color: var(--neon-gold); margin-bottom: 10px"
+          >
+            LOADING...
+          </h2>
+          <p id="card-desc" style="color: #ddd; line-height: 1.4">...</p>
+        </div>
+      </div>
+    </div>
 
-    const events = [
+    <div class="controls">
+      <button class="btn btn-l" id="btn-l" onclick="makeChoice('left')">
+        NO
+      </button>
+      <button class="btn btn-r" id="btn-r" onclick="makeChoice('right')">
+        YES
+      </button>
+    </div>
+
+    <!-- 失败/付费弹窗 -->
+    <div class="modal" id="modal-fail">
+      <h1 style="color: var(--neon-red); font-size: 2.5rem; margin: 0">
+        差一点!
+      </h1>
+      <p style="color: #ccc; margin: 10px 0">
+        你在第
+        <span id="fail-level" style="color: white; font-size: 1.5rem">9</span>
+        关倒下了
+      </p>
+
+      <div
+        style="
+          margin: 20px 0;
+          border: 1px solid var(--neon-gold);
+          padding: 15px;
+          border-radius: 5px;
+        "
+      >
+        <p style="color: var(--neon-gold); margin: 0; font-size: 1.1rem">
+          距离领取 PS5 仅差
+          <span id="fail-left" style="font-size: 1.5rem; font-weight: bold"
+            >3</span
+          >
+          关
+        </p>
+      </div>
+
+      <!-- 首次免费提示 -->
+      <div id="free-play-btn" style="display: none; width: 100%">
+        <button class="btn btn-r" onclick="restartGame()">
+          免费再试一次 (剩余1次)
+        </button>
+      </div>
+
+      <!-- 付费按钮 -->
+      <div id="pay-btn-group" style="display: none; width: 100%">
+        <p style="font-size: 0.8rem; color: #666">免费次数已用完</p>
+        <button class="btn btn-pay" onclick="showPayment()">
+          支付 ￥10.00 继续挑战
+        </button>
+      </div>
+    </div>
+
+    <!-- 支付界面 (模拟) -->
+    <div class="modal" id="modal-payment">
+      <h2 style="color: white">支付 10 元</h2>
+      <div class="qr-placeholder">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
+          style="width: 100%; opacity: 0.8"
+        />
+        <!-- 实际使用时替换为你的收款码 -->
+      </div>
+      <p style="font-size: 0.8rem; color: #888">
+        (模拟支付环境：点击下方按钮直接成功)
+      </p>
+      <button
+        class="btn btn-r"
+        style="margin-top: 20px"
+        onclick="paymentSuccess()"
+      >
+        我已支付
+      </button>
+      <button
+        class="btn btn-l"
+        style="
+          margin-top: 10px;
+          background: transparent;
+          border: 1px solid #333;
+        "
+        onclick="closePayment()"
+      >
+        取消
+      </button>
+    </div>
+
+    <!-- 领奖表单 -->
+    <div class="modal" id="modal-win">
+      <img
+        src="https://gmedia.playstation.com/is/image/SIEPDC/ps5-product-thumbnail-01-en-14sep21?$facebook$"
+        style="width: 150px; margin-bottom: 10px"
+      />
+      <h1 style="color: var(--neon-gold)">挑战成功!</h1>
+      <p style="font-size: 0.9rem; color: #ccc; margin-bottom: 20px">
+        恭喜通关！请填写收货信息寄送奖品。
+      </p>
+
+      <div class="input-group">
+        <input type="text" class="input-field" placeholder="姓名" />
+        <input type="text" class="input-field" placeholder="手机号" />
+        <input type="text" class="input-field" placeholder="详细收货地址" />
+      </div>
+
+      <button class="btn btn-pay" onclick="submitAddress()">提交领奖</button>
+    </div>
+
+    <script>
+      // --- 核心配置 ---
+      const TARGET_LEVEL = 12; // 12关
+      let level = 0;
+      let stats = [50, 50, 50, 50];
+      let isFirstPlay = localStorage.getItem("hasPlayedFree") !== "true"; // 检查是否玩过
+
+      // 事件库
+      const events = [
         {
-            title: "捡到宝了",
-            text: "后巷发现一个为了换机械义肢而欠债的落魄歌手，虽然很脏，但脸是顶级的。",
-            bg: "https://images.unsplash.com/photo-1605218427306-0220221af784?q=80&w=1000&auto=format&fit=crop", // 霓虹小巷
-            img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop", // 美女/帅哥图
-            left: "滚开 (Dismiss)",
-            right: "签下他 (Sign Contract)",
-            effectLeft: [0, 0, 0, 0], 
-            effectRight: [-10, 5, 15, 0] 
+          t: "捡到钱包",
+          d: "是否归还？",
+          l: "归还",
+          r: "私吞",
+          el: [0, 5, 0, 5],
+          er: [20, 0, 0, -20],
+          img: "https://images.unsplash.com/photo-1621504450162-e1529e4d6749?q=80&w=600",
         },
         {
-            title: "非法改装",
-            text: "黑市医生提议给女团成员植入'魅魔声线'芯片，能通过声波控制粉丝情绪。",
-            bg: "https://images.unsplash.com/photo-1515630278258-407f66498911?q=80&w=1000&auto=format&fit=crop", // 赛博诊所
-            img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=600&auto=format&fit=crop", // 赛博女性
-            left: "太危险了 (Reject)",
-            right: "立刻植入 (Install Chip)",
-            effectLeft: [0, -5, 0, 5], 
-            effectRight: [-20, 20, 10, -30] // 掉大量节操
+          t: "药剂推销",
+          d: "喝下神秘药水？",
+          l: "拒绝",
+          r: "喝！",
+          el: [0, 0, 0, 5],
+          er: [-10, 10, 10, -10],
+          img: "https://images.unsplash.com/photo-1614726365723-49cfae968c94?q=80&w=600",
         },
         {
-            title: "金主来电",
-            text: "荒坂塔的高层看上了你的C位，想让她去'私人云端派对'表演一晚。",
-            bg: "https://images.unsplash.com/photo-1480796927426-f609979314bd?q=80&w=1000&auto=format&fit=crop", // 摩天大楼
-            img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=600&auto=format&fit=crop", // 帅哥/高层
-            left: "拒绝潜规则 (Refuse)",
-            right: "这都是为了公司 (Accept)",
-            effectLeft: [-10, 5, 5, 10], 
-            effectRight: [40, -5, -20, -20]
+          t: "黑客勒索",
+          d: "支付赎金？",
+          l: "给钱",
+          r: "不给",
+          el: [-20, 0, 0, 0],
+          er: [0, -20, 0, -10],
+          img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600",
         },
         {
-            title: "虚拟入侵",
-            text: "竞争对手黑掉了我们的全息投影设备，舞台上出现了不雅画面。",
-            bg: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000&auto=format&fit=crop", // 舞台
-            img: "https://plus.unsplash.com/premium_photo-1661330664949-075e6d628c68?q=80&w=600&auto=format&fit=crop", // 故障画面或黑客
-            left: "切断电源 (Shutdown)",
-            right: "反向黑回去 (Counter-Hack)",
-            effectLeft: [-5, -10, 0, 0], 
-            effectRight: [-15, 10, 0, -10]
+          t: "深夜派对",
+          d: "参加富豪派对？",
+          l: "不去",
+          r: "去",
+          el: [0, -5, 0, 5],
+          er: [10, 5, 10, -15],
+          img: "https://images.unsplash.com/photo-1514525253440-b393452e2729?q=80&w=600",
         },
         {
-            title: "粉丝狂热",
-            text: "一群狂热粉试图把意识上传到公司服务器，想永远和偶像在一起。",
-            bg: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop", // 数据中心
-            img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop", // 狂热人群
-            left: "报警清理 (Police)",
-            right: "收费允许 (Charge Fee)",
-            effectLeft: [0, -5, 0, 5], 
-            effectRight: [30, 10, 0, -40] // 极度缺德
-        }
-    ];
+          t: "街头斗殴",
+          d: "帮忙吗？",
+          l: "路过",
+          r: "帮忙",
+          el: [0, 0, 0, -5],
+          er: [-10, 10, 0, 5],
+          img: "https://images.unsplash.com/photo-1509557965875-b88c97052f0e?q=80&w=600",
+        },
+        {
+          t: "机械改造",
+          d: "安装非法义体？",
+          l: "不要",
+          r: "要强力",
+          el: [0, 0, 0, 5],
+          er: [-15, 10, 10, -20],
+          img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600",
+        },
+      ];
 
-    // --- 核心逻辑 ---
+      let currentEvent = {};
 
-    function initGame() {
-        stats = { money: 50, fame: 50, looks: 50, ethics: 50 };
-        weeks = 0;
-        document.getElementById('game-over').style.display = 'none';
+      function init() {
+        level = 0;
+        stats = [50, 50, 50, 50];
+        document.getElementById("modal-fail").style.display = "none";
+        document.getElementById("modal-win").style.display = "none";
+        document.getElementById("modal-payment").style.display = "none";
+
+        // 生成顶部进度点
+        let dotsHtml = "";
+        for (let i = 0; i < TARGET_LEVEL; i++)
+          dotsHtml += `<div class="progress-dot" id="dot-${i}"></div>`;
+        document.getElementById("progress-container").innerHTML = dotsHtml;
+
         updateUI();
         nextCard();
-    }
+      }
 
-    function updateUI() {
-        updateBar('bar-money', stats.money);
-        updateBar('bar-fame', stats.fame);
-        updateBar('bar-looks', stats.looks);
-        updateBar('bar-ethics', stats.ethics);
-    }
-
-    function updateBar(id, value) {
-        const el = document.getElementById(id);
-        el.style.width = value + '%';
-        // 颜色逻辑
-        if (value < 20) el.style.background = 'red';
-        else if (value > 80) el.style.background = '#fff';
-        else {
-             if(id.includes('money')) el.style.background = '#ffd700';
-             if(id.includes('fame')) el.style.background = '#ff4500';
-             if(id.includes('looks')) el.style.background = '#ff00ff';
-             if(id.includes('ethics')) el.style.background = '#00f3ff';
+      function updateUI() {
+        // 更新数值条
+        for (let i = 0; i < 4; i++) {
+          let el = document.getElementById(`bar-${i + 1}`);
+          el.style.width = stats[i] + "%";
+          if (stats[i] < 15 || stats[i] > 85)
+            el.style.boxShadow = "0 0 10px white";
+          else el.style.boxShadow = "none";
         }
-    }
 
-    function nextCard() {
-        const randomIndex = Math.floor(Math.random() * events.length);
-        currentCard = events[randomIndex];
-        
-        // 更新文本
-        document.getElementById('card-title').innerText = currentCard.title;
-        document.getElementById('card-desc').innerText = currentCard.text;
-        document.getElementById('btn-left').innerText = "< " + currentCard.left;
-        document.getElementById('btn-right').innerText = currentCard.right + " >";
+        // 更新文字和进度点
+        document.getElementById("rank-display").innerText = `Level ${level}`;
+        document.getElementById("weeks-left").innerText = TARGET_LEVEL - level;
 
-        // 更新图片 (使用占位符或真实链接)
-        document.getElementById('bg-layer').style.backgroundImage = `url('${currentCard.bg || defaultBg}')`;
-        document.getElementById('char-img').src = currentCard.img;
+        for (let i = 0; i < TARGET_LEVEL; i++) {
+          let dot = document.getElementById(`dot-${i}`);
+          if (i < level) dot.classList.add("active");
+          else dot.classList.remove("active");
+        }
+      }
 
-        // 卡片进入动画
-        const card = document.getElementById('card-element');
-        card.style.transform = 'scale(0.95) translateY(10px)';
-        card.style.opacity = '0';
-        setTimeout(() => {
-            card.style.transform = 'scale(1) translateY(0)';
-            card.style.opacity = '1';
-        }, 50);
-    }
+      function nextCard() {
+        currentEvent = events[Math.floor(Math.random() * events.length)];
+        document.getElementById("card-title").innerText = currentEvent.t;
+        document.getElementById("card-desc").innerText = currentEvent.d;
+        document.getElementById("btn-l").innerText = currentEvent.l;
+        document.getElementById("btn-r").innerText = currentEvent.r;
+        document.getElementById("card-img").src = currentEvent.img;
+      }
 
-    function makeChoice(direction) {
-        weeks++;
-        const effects = direction === 'left' ? currentCard.effectLeft : currentCard.effectRight;
+      function makeChoice(side) {
+        level++;
+        let effects = side === "left" ? currentEvent.el : currentEvent.er;
 
-        stats.money += effects[0];
-        stats.fame += effects[1];
-        stats.looks += effects[2];
-        stats.ethics += effects[3];
+        // --- 核心操控逻辑 ---
+        let difficultyMult = 1;
 
-        // 边界限制
-        for (let key in stats) {
-            if (stats[key] > 100) stats[key] = 100;
+        if (isFirstPlay) {
+          // 新手保护期 (1-7关)：伤害减半，甚至加血，确保不死
+          if (level <= 7) {
+            difficultyMult = 0.5;
+            // 强制修正：如果某个数值过低，反向加血
+            for (let i = 0; i < 4; i++) if (stats[i] < 30) stats[i] += 15;
+          }
+          // 必死期 (8-10关)：伤害爆表，确保用户死在黎明前
+          else if (level >= 8) {
+            difficultyMult = 3.0;
+            // 强制恶意干扰：直接扣除生命值较低的属性
+            for (let i = 0; i < 4; i++) if (stats[i] < 50) stats[i] -= 20;
+          }
+        } else {
+          // 付费用户：全程困难，但公平随机 (依然很难，保持0.01%概率)
+          difficultyMult = 2.0;
+        }
+
+        for (let i = 0; i < 4; i++) {
+          // 应用数值
+          stats[i] += Math.floor(effects[i] * difficultyMult);
+          // 随机波动
+          stats[i] += Math.floor(Math.random() * 10) - 5;
+          if (stats[i] > 100) stats[i] = 100;
+          if (stats[i] < 0) stats[i] = 0;
         }
 
         updateUI();
-        checkGameOver();
-    }
+        setTimeout(checkStatus, 200);
+      }
 
-    function checkGameOver() {
-        let reason = "";
-        let isDead = false;
+      function checkStatus() {
+        let dead = false;
+        if (
+          stats[0] <= 0 ||
+          stats[1] <= 0 ||
+          stats[2] >= 100 ||
+          stats[3] <= 0 ||
+          stats[3] >= 100
+        )
+          dead = true;
 
-        if (stats.money <= 0) {
-            reason = "资金链断裂。你被高利贷切碎卖到了义体黑市。";
-            isDead = true;
-        } else if (stats.fame <= 0) {
-            reason = "无人问津。你的酒吧变成了流浪汉的公共厕所。";
-            isDead = true;
-        } else if (stats.looks <= 0) {
-            reason = "颜值崩塌。团员因为植入体排异反应集体毁容，公司倒闭。";
-            isDead = true;
-        } else if (stats.ethics <= 0) {
-            reason = "道德沦丧。NCPD特警组冲进了你的办公室，你被判处终身监禁。";
-            isDead = true;
-        } else if (stats.ethics >= 100) {
-            reason = "过于圣母。你在夜之城就像一只小白兔，被其他公司吞并了。";
-            isDead = true;
-        }
-
-        if (isDead) {
-            document.getElementById('game-over').style.display = 'flex';
-            document.getElementById('end-reason').innerText = reason + `\n\n存活周数: ${weeks}`;
+        if (dead) {
+          showFailModal();
+        } else if (level >= TARGET_LEVEL) {
+          document.getElementById("modal-win").style.display = "flex";
         } else {
-            nextCard();
+          nextCard();
         }
-    }
+      }
 
-    function restartGame() {
-        initGame();
-    }
+      function showFailModal() {
+        document.getElementById("modal-fail").style.display = "flex";
+        document.getElementById("fail-level").innerText = level;
+        document.getElementById("fail-left").innerText = TARGET_LEVEL - level;
 
-    // 预加载
-    initGame();
+        // 判断是否第一次玩
+        if (isFirstPlay) {
+          // 第一次：记录状态，显示"再试一次"（其实这里逻辑上已经是第一次结束了，看你想不想给第二次免费机会）
+          // 根据需求描述："第一次免费...免费第一次后就需要支付"
+          // 所以第一次死掉后，按钮应该变成支付
+          localStorage.setItem("hasPlayedFree", "true");
+          isFirstPlay = false; // 内存状态更新
 
-</script>
-</body>
+          // 显示支付按钮（因为刚用完了免费机会）
+          document.getElementById("free-play-btn").style.display = "none";
+          document.getElementById("pay-btn-group").style.display = "block";
+        } else {
+          // 已经不是第一次了，直接显示支付
+          document.getElementById("free-play-btn").style.display = "none";
+          document.getElementById("pay-btn-group").style.display = "block";
+        }
+      }
+
+      function showPayment() {
+        document.getElementById("modal-payment").style.display = "flex";
+      }
+
+      function closePayment() {
+        document.getElementById("modal-payment").style.display = "none";
+      }
+
+      function paymentSuccess() {
+        // 模拟支付成功
+        document.getElementById("modal-payment").style.display = "none";
+        document.getElementById("modal-fail").style.display = "none";
+        // 支付后重新开始
+        init();
+      }
+
+      function restartGame() {
+        // 这个函数一般只在逻辑需要"重置"时调用
+        init();
+      }
+
+      function submitAddress() {
+        let inputs = document.querySelectorAll(".input-field");
+        if (inputs[0].value && inputs[1].value) {
+          alert("提交成功！奖品将在7个工作日内寄出。");
+          location.reload();
+        } else {
+          alert("请填写完整信息");
+        }
+      }
+
+      // 启动检查
+      // 如果是第一次进入页面，且localStorage没有记录，则视为免费用户
+      // 初始化逻辑在 HTML 加载后自动运行
+      init();
+    </script>
+  </body>
 </html>
