@@ -1,665 +1,1500 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <title>夜城挑战：夺取 PS5</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;800&display=swap"
-      rel="stylesheet"
-    />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>霓虹帝国 | NEON EMPIRE</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-      :root {
-        --neon-gold: #ffd700;
-        --neon-red: #ff003c;
-        --neon-blue: #00f3ff;
-        --bg-color: #050505;
-        --glass: rgba(20, 20, 20, 0.95);
-      }
-
-      * {
-        box-sizing: border-box;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
-      }
-      body {
-        margin: 0;
-        background: var(--bg-color);
-        font-family: "Rajdhani", sans-serif;
-        height: 100vh;
-        overflow: hidden;
-        color: white;
-        display: flex;
-        flex-direction: column;
-      }
-
-      /* 背景 */
-      .bg-grid {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
-        background-size: 40px 40px;
-        transform: perspective(500px) rotateX(60deg) translateY(-100px)
-          translateZ(-200px);
-        z-index: -2;
-        opacity: 0.5;
-      }
-
-      /* 顶部 */
-      .header-zone {
-        padding: 10px 15px;
-        z-index: 10;
-      }
-      .rank-card {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(0, 20, 40, 0.8);
-        border: 1px solid var(--neon-blue);
-        border-radius: 8px;
-        padding: 10px;
-        box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
-      }
-      .rank-value {
-        font-family: "Orbitron";
-        font-size: 1.5rem;
-        color: white;
-        text-shadow: 0 0 5px var(--neon-blue);
-      }
-      .prize-img-small {
-        height: 50px;
-        width: auto;
-        filter: drop-shadow(0 0 5px var(--neon-blue));
-      }
-
-      /* 进度条 (12格) */
-      .progress-track {
-        display: flex;
-        gap: 2px;
-        padding: 5px 15px;
-        margin-bottom: 5px;
-      }
-      .progress-dot {
-        flex: 1;
-        height: 8px;
-        background: #333;
-        border-radius: 2px;
-      }
-      .progress-dot.active {
-        background: var(--neon-gold);
-        box-shadow: 0 0 5px var(--neon-gold);
-      }
-
-      /* 数值条 */
-      .stats-bar {
-        display: flex;
-        gap: 5px;
-        padding: 0 15px;
-        height: 6px;
-        width: 100%;
-      }
-      .stat-pill {
-        flex: 1;
-        background: #222;
-        border-radius: 3px;
-        overflow: hidden;
-      }
-      .stat-fill {
-        height: 100%;
-        width: 50%;
-        transition: width 0.3s;
-      }
-
-      /* 游戏卡片 */
-      .game-area {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 10px;
-        perspective: 1000px;
-      }
-      .card {
-        width: 100%;
-        max-width: 400px;
-        height: 100%;
-        max-height: 520px;
-        background: var(--glass);
-        border: 2px solid var(--neon-blue);
-        border-radius: 12px;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 0 30px rgba(0, 243, 255, 0.1);
-      }
-      .card-visual {
-        flex: 3;
-        position: relative;
-        overflow: hidden;
-        margin: 5px;
-        border-radius: 8px;
-        background: black;
-      }
-      .card-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.9;
-      }
-      .card-text {
-        flex: 2;
-        padding: 15px;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-
-      /* 按钮 */
-      .controls {
-        display: flex;
-        gap: 10px;
-        padding: 15px;
-        width: 100%;
-        max-width: 420px;
-        margin: 0 auto;
-      }
-      .btn {
-        flex: 1;
-        padding: 20px;
-        border: none;
-        font-family: "Orbitron";
-        font-weight: bold;
-        font-size: 1rem;
-        color: black;
-        clip-path: polygon(
-          10px 0,
-          100% 0,
-          100% calc(100% - 10px),
-          calc(100% - 10px) 100%,
-          0 100%,
-          0 10px
-        );
-        cursor: pointer;
-      }
-      .btn-l {
-        background: var(--neon-red);
-        color: white;
-      }
-      .btn-r {
-        background: var(--neon-blue);
-        color: black;
-      }
-      .btn-pay {
-        background: var(--neon-gold);
-        color: black;
-        width: 100%;
-        margin-top: 15px;
-        animation: pulse 1s infinite;
-      }
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
+        * {
+            font-family: 'Noto Sans SC', sans-serif;
         }
-        50% {
-          transform: scale(1.02);
+        
+        .cyber-font {
+            font-family: 'Orbitron', sans-serif;
         }
-        100% {
-          transform: scale(1);
+        
+        body {
+            background: #0a0a0f;
+            overflow-x: hidden;
         }
-      }
-
-      /* 通用弹窗 */
-      .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.98);
-        z-index: 100;
-        display: none;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        padding: 30px;
-      }
-
-      /* 输入框样式 */
-      .input-group {
-        width: 100%;
-        margin: 10px 0;
-        text-align: left;
-      }
-      .input-field {
-        width: 100%;
-        padding: 12px;
-        background: #111;
-        border: 1px solid var(--neon-blue);
-        color: white;
-        font-family: "Rajdhani";
-        margin-top: 5px;
-        outline: none;
-      }
-
-      /* 支付二维码模拟 */
-      .qr-placeholder {
-        width: 200px;
-        height: 200px;
-        background: white;
-        margin: 20px auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: black;
-        font-weight: bold;
-      }
+        
+        /* 扫描线效果 */
+        .scanlines::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1),
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        /* 霓虹发光 */
+        .neon-pink {
+            text-shadow: 0 0 10px #ff2d95, 0 0 20px #ff2d95, 0 0 40px #ff2d95;
+        }
+        
+        .neon-cyan {
+            text-shadow: 0 0 10px #00f7ff, 0 0 20px #00f7ff, 0 0 40px #00f7ff;
+        }
+        
+        .neon-gold {
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 40px #ffd700;
+        }
+        
+        .neon-box-pink {
+            box-shadow: 0 0 10px #ff2d95, 0 0 20px rgba(255, 45, 149, 0.5), inset 0 0 20px rgba(255, 45, 149, 0.1);
+        }
+        
+        .neon-box-cyan {
+            box-shadow: 0 0 10px #00f7ff, 0 0 20px rgba(0, 247, 255, 0.5), inset 0 0 20px rgba(0, 247, 255, 0.1);
+        }
+        
+        .neon-box-gold {
+            box-shadow: 0 0 20px #ffd700, 0 0 40px rgba(255, 215, 0, 0.5), inset 0 0 30px rgba(255, 215, 0, 0.1);
+            animation: goldPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes goldPulse {
+            0%, 100% { box-shadow: 0 0 20px #ffd700, 0 0 40px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 40px #ffd700, 0 0 80px rgba(255, 215, 0, 0.8); }
+        }
+        
+        /* 故障效果 */
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        
+        .glitch:hover {
+            animation: glitch 0.3s ease infinite;
+        }
+        
+        /* 进度条 */
+        .progress-bar {
+            background: linear-gradient(90deg, #ff2d95, #ff6b6b, #ffd700);
+            background-size: 200% 100%;
+            animation: progressGlow 2s linear infinite;
+        }
+        
+        @keyframes progressGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        
+        /* 按钮悬停 */
+        .cyber-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+        
+        /* 角色卡片 */
+        .character-card {
+            background: linear-gradient(135deg, rgba(20, 20, 30, 0.9), rgba(40, 20, 60, 0.9));
+            border: 1px solid rgba(255, 45, 149, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .character-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: #ff2d95;
+        }
+        
+        /* 大奖动画 */
+        @keyframes prizeFloat {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        }
+        
+        .prize-float {
+            animation: prizeFloat 3s ease-in-out infinite;
+        }
+        
+        .sparkle {
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+        
+        /* 排名闪烁 */
+        @keyframes rankPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .rank-pulse {
+            animation: rankPulse 1s ease-in-out infinite;
+        }
+        
+        /* 选项卡片 */
+        .choice-card {
+            background: linear-gradient(135deg, rgba(20, 20, 40, 0.95), rgba(40, 20, 50, 0.95));
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .choice-card:hover {
+            border-color: #00f7ff;
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(0, 247, 255, 0.3);
+        }
+        
+        .choice-card.risky:hover {
+            border-color: #ff2d95;
+            box-shadow: 0 0 30px rgba(255, 45, 149, 0.3);
+        }
+        
+        /* 心跳效果 */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.05); }
+        }
+        
+        .heartbeat {
+            animation: heartbeat 1s ease-in-out infinite;
+        }
+        
+        /* 屏幕震动 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        /* 淡入动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        /* 粒子效果 */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            animation: particleFloat 3s ease-out forwards;
+        }
+        
+        @keyframes particleFloat {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-100px) scale(0); }
+        }
+        
+        /* 性感渐变背景 */
+        .sexy-gradient {
+            background: linear-gradient(135deg, #1a0a1a 0%, #2d1f3d 25%, #1a2a3a 50%, #0f1a2a 75%, #1a0a1a 100%);
+        }
+        
+        /* 霓虹边框动画 */
+        @keyframes borderGlow {
+            0%, 100% { border-color: #ff2d95; }
+            33% { border-color: #00f7ff; }
+            66% { border-color: #ffd700; }
+        }
+        
+        .border-animate {
+            animation: borderGlow 3s linear infinite;
+        }
+        
+        /* PS5图片样式 */
+        .ps5-image {
+            filter: drop-shadow(0 0 30px rgba(0, 150, 255, 0.8)) drop-shadow(0 0 60px rgba(255, 255, 255, 0.5));
+        }
+        
+        @keyframes ps5Glow {
+            0%, 100% { filter: drop-shadow(0 0 30px rgba(0, 150, 255, 0.8)) drop-shadow(0 0 60px rgba(255, 255, 255, 0.5)); }
+            50% { filter: drop-shadow(0 0 50px rgba(0, 200, 255, 1)) drop-shadow(0 0 100px rgba(255, 255, 255, 0.8)); }
+        }
+        
+        .ps5-glow {
+            animation: ps5Glow 2s ease-in-out infinite;
+        }
+        
+        /* 通关进度 */
+        .win-progress {
+            background: linear-gradient(90deg, #00ff88, #00f7ff, #ff2d95);
+            background-size: 200% 100%;
+            animation: progressGlow 3s linear infinite;
+        }
+        
+        /* 弹窗动画 */
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .modal-animate {
+            animation: modalIn 0.4s ease-out forwards;
+        }
+        
+        /* 彩带效果 */
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        .confetti {
+            animation: confetti 3s linear forwards;
+        }
     </style>
-  </head>
-  <body>
-    <div class="bg-grid"></div>
-
-    <div class="header-zone">
-      <div class="rank-card">
-        <div>
-          <div style="font-size: 0.7rem; color: #aaa">
-            距离大奖还差
-            <span
-              id="weeks-left"
-              style="color: var(--neon-gold); font-size: 1.2rem"
-              >12</span
-            >
-            关
-          </div>
-          <div class="rank-value" id="rank-display">Level 0</div>
+</head>
+<body class="scanlines min-h-screen sexy-gradient text-white">
+    
+    <!-- 顶部状态栏 -->
+    <div id="statusBar" class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm border-b border-pink-500/30 p-2 hidden">
+        <div class="max-w-4xl mx-auto flex items-center justify-between text-sm">
+            <!-- 排名显示 -->
+            <div class="flex items-center gap-2">
+                <span class="text-gray-400">🏆 大奖冲刺排名</span>
+                <span class="cyber-font text-yellow-400 neon-gold rank-pulse" id="currentRank">#1,247</span>
+                <span class="text-gray-500">/ 12,847</span>
+            </div>
+            
+            <!-- 通关进度 -->
+            <div class="flex items-center gap-2">
+                <span class="text-gray-400">🎮 通关进度</span>
+                <span class="cyber-font text-green-400" id="winCount">0</span>
+                <span class="text-gray-500">/ 18</span>
+            </div>
+            
+            <!-- 资源 -->
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-1">
+                    <span>💰</span>
+                    <span class="cyber-font text-green-400" id="money">0</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span>🔥</span>
+                    <span class="cyber-font text-pink-400" id="reputation">0</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span>⚡</span>
+                    <span class="cyber-font text-cyan-400" id="energy">100</span>
+                </div>
+            </div>
+            
+            <!-- 时间 -->
+            <div class="flex items-center gap-2">
+                <span class="text-gray-400">⏱️</span>
+                <span class="cyber-font text-red-400" id="gameTimer">5:00</span>
+            </div>
         </div>
-        <img
-          src="https://gmedia.playstation.com/is/image/SIEPDC/ps5-product-thumbnail-01-en-14sep21?$facebook$"
-          class="prize-img-small"
-        />
-      </div>
-    </div>
-
-    <!-- 12级进度条 -->
-    <div class="progress-track" id="progress-container">
-      <!-- JS生成 -->
-    </div>
-
-    <div class="stats-bar">
-      <div class="stat-pill">
-        <div id="bar-1" class="stat-fill" style="background: #ffd700"></div>
-      </div>
-      <div class="stat-pill">
-        <div id="bar-2" class="stat-fill" style="background: #ff4500"></div>
-      </div>
-      <div class="stat-pill">
-        <div id="bar-3" class="stat-fill" style="background: #bc13fe"></div>
-      </div>
-      <div class="stat-pill">
-        <div id="bar-4" class="stat-fill" style="background: #00f3ff"></div>
-      </div>
-    </div>
-
-    <div class="game-area">
-      <div class="card" id="game-card">
-        <div class="card-visual">
-          <img id="card-img" class="card-img" src="" alt="" />
+        
+        <!-- 进度条 -->
+        <div class="max-w-4xl mx-auto mt-2">
+            <div class="h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div class="progress-bar h-full rounded-full transition-all duration-500" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <span>调酒师</span>
+                <span>领班</span>
+                <span>经理</span>
+                <span>合伙人</span>
+                <span class="text-yellow-400">👑 BOSS</span>
+            </div>
         </div>
-        <div class="card-text">
-          <h2
-            id="card-title"
-            style="color: var(--neon-gold); margin-bottom: 10px"
-          >
-            LOADING...
-          </h2>
-          <p id="card-desc" style="color: #ddd; line-height: 1.4">...</p>
+    </div>
+    
+    <!-- 主游戏容器 -->
+    <div id="gameContainer" class="min-h-screen flex items-center justify-center p-4">
+        
+        <!-- 开始界面 -->
+        <div id="startScreen" class="text-center max-w-2xl mx-auto">
+            <!-- PS5大奖展示 -->
+            <div class="mb-8 relative">
+                <div class="prize-float inline-block">
+                    <!-- PS5图片 -->
+                    <div class="relative">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/PlayStation_5_and_DualSense_with_transparent_background.png/800px-PlayStation_5_and_DualSense_with_transparent_background.png" 
+                             alt="PS5" 
+                             class="w-64 h-auto mx-auto ps5-glow"
+                             onerror="this.style.display='none'; document.getElementById('ps5Fallback').style.display='block';">
+                        <div id="ps5Fallback" class="hidden text-8xl">🎮</div>
+                    </div>
+                </div>
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="sparkle absolute text-yellow-400 text-2xl" style="top: 10%; left: 20%;">✦</div>
+                    <div class="sparkle absolute text-pink-400 text-xl" style="top: 30%; right: 15%; animation-delay: 0.3s;">✧</div>
+                    <div class="sparkle absolute text-cyan-400 text-2xl" style="bottom: 20%; left: 10%; animation-delay: 0.6s;">✦</div>
+                    <div class="sparkle absolute text-yellow-400 text-xl" style="bottom: 10%; right: 25%; animation-delay: 0.9s;">✧</div>
+                </div>
+                <div class="neon-box-gold rounded-2xl p-4 bg-gradient-to-r from-yellow-900/30 via-yellow-600/20 to-yellow-900/30 border border-yellow-500/50 mt-4">
+                    <p class="cyber-font text-yellow-400 text-xl neon-gold">🎮 终极大奖 🎮</p>
+                    <p class="text-3xl font-bold mt-2">PlayStation 5 游戏主机</p>
+                    <p class="text-gray-400 mt-2">价值 ¥4,299 | 通关18次即可获得</p>
+                    <p class="text-pink-400 text-sm mt-1">🍀 幸运奖：霸屏券 x1</p>
+                </div>
+            </div>
+            
+            <h1 class="cyber-font text-5xl md:text-7xl font-black mb-4">
+                <span class="text-pink-500 neon-pink">NEON</span>
+                <span class="text-cyan-400 neon-cyan">EMPIRE</span>
+            </h1>
+            <p class="text-2xl text-gray-300 mb-2">霓 虹 帝 国</p>
+            <p class="text-pink-400 mb-8">从调酒师到酒吧帝国BOSS的逆袭之路</p>
+            
+            <!-- 当前竞争者 -->
+            <div class="bg-black/50 rounded-xl p-4 mb-6 border border-cyan-500/30 neon-box-cyan">
+                <p class="text-cyan-400 cyber-font mb-2">🔥 实时挑战者</p>
+                <div class="flex justify-center gap-4 text-sm">
+                    <span class="text-gray-400">当前在线: <span class="text-white">12,847</span></span>
+                    <span class="text-gray-400">大奖概率: <span class="text-yellow-400">0.01%</span></span>
+                    <span class="text-gray-400">历史获奖: <span class="text-green-400">127</span></span>
+                </div>
+            </div>
+            
+            <!-- 用户通关进度 -->
+            <div class="bg-black/50 rounded-xl p-4 mb-6 border border-green-500/30">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400">🎯 你的通关进度</span>
+                    <span class="cyber-font text-green-400"><span id="userWinCount">0</span> / 18</span>
+                </div>
+                <div class="h-3 bg-gray-800 rounded-full overflow-hidden">
+                    <div class="win-progress h-full rounded-full transition-all duration-500" id="winProgressBar" style="width: 0%"></div>
+                </div>
+                <p class="text-xs text-gray-500 mt-2" id="winProgressText">再通关 18 次即可获得 PS5 大奖！</p>
+            </div>
+            
+            <!-- 免费/付费提示 -->
+            <div id="freePlayBadge" class="bg-gradient-to-r from-green-600 to-cyan-600 rounded-xl p-3 mb-6 inline-block">
+                <p class="cyber-font text-white text-lg">🎁 首次免费游玩！</p>
+            </div>
+            <div id="paidPlayBadge" class="hidden bg-gradient-to-r from-pink-600 to-purple-600 rounded-xl p-3 mb-6 inline-block">
+                <p class="cyber-font text-white text-lg">💰 ¥10 / 次</p>
+            </div>
+            
+            <!-- 选择性别/路线 -->
+            <p class="text-gray-400 mb-4">选择你的命运之路</p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <button onclick="checkAndStartGame('female')" class="cyber-btn choice-card risky px-8 py-6 rounded-xl group">
+                    <div class="text-4xl mb-2">👩‍🎤</div>
+                    <div class="cyber-font text-pink-400 text-xl group-hover:neon-pink">女团路线</div>
+                    <div class="text-gray-400 text-sm mt-1">成为女王BOSS</div>
+                    <div class="text-pink-500 text-xs mt-2">💋 魅惑 · 野心 · 征服</div>
+                </button>
+                
+                <button onclick="checkAndStartGame('male')" class="cyber-btn choice-card px-8 py-6 rounded-xl group">
+                    <div class="text-4xl mb-2">🕺</div>
+                    <div class="cyber-font text-cyan-400 text-xl group-hover:neon-cyan">男团路线</div>
+                    <div class="text-gray-400 text-sm mt-1">成为霸道总裁</div>
+                    <div class="text-cyan-500 text-xs mt-2">🔥 魅力 · 权谋 · 掌控</div>
+                </button>
+            </div>
+            
+            <p class="text-gray-600 text-xs mt-8">⚠️ 游戏包含轻微成人暗示内容，适合18岁以上玩家</p>
         </div>
-      </div>
+        
+        <!-- 支付弹窗 -->
+        <div id="paymentModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-gradient-to-b from-gray-900 to-black rounded-2xl p-6 max-w-md w-full border border-pink-500/50 neon-box-pink modal-animate">
+                <h2 class="cyber-font text-2xl text-center text-pink-400 mb-4">💰 继续挑战</h2>
+                
+                <div class="bg-black/50 rounded-xl p-4 mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-gray-400">当前进度</span>
+                        <span class="cyber-font text-green-400"><span id="modalWinCount">0</span> / 18</span>
+                    </div>
+                    <p class="text-sm text-gray-400">距离 PS5 大奖还需通关 <span class="text-yellow-400" id="modalRemaining">18</span> 次</p>
+                </div>
+                
+                <div class="text-center mb-6">
+                    <p class="text-gray-300 mb-2">支付 <span class="cyber-font text-2xl text-yellow-400">¥10</span> 继续游戏</p>
+                    <p class="text-xs text-gray-500">每次通关都离大奖更近一步！</p>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="closePaymentModal()" class="flex-1 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 transition">
+                        取消
+                    </button>
+                    <button onclick="processPayment()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 transition cyber-btn">
+                        💳 立即支付
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 游戏界面 -->
+        <div id="gameScreen" class="hidden w-full max-w-4xl mx-auto pt-24 pb-8">
+            <!-- 场景/故事区域 -->
+            <div id="storyArea" class="mb-6">
+                <div class="character-card rounded-2xl p-6 mb-4">
+                    <div class="flex items-start gap-4">
+                        <div class="text-6xl" id="characterEmoji">👤</div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="cyber-font text-pink-400" id="characterName">???</span>
+                                <span class="text-xs px-2 py-0.5 rounded bg-pink-500/20 text-pink-300" id="characterRole">未知</span>
+                            </div>
+                            <p class="text-gray-300 leading-relaxed" id="storyText">
+                                故事开始...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 场景图片/氛围 -->
+                <div id="sceneVisual" class="rounded-xl overflow-hidden h-32 bg-gradient-to-r from-purple-900/50 via-pink-900/30 to-purple-900/50 flex items-center justify-center border border-pink-500/20">
+                    <div class="text-center">
+                        <div class="text-4xl mb-2" id="sceneEmoji">🍸</div>
+                        <div class="text-gray-400 text-sm" id="sceneName">神秘酒吧</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 选择区域 -->
+            <div id="choicesArea" class="space-y-3">
+                <!-- 动态生成选项 -->
+            </div>
+        </div>
+        
+        <!-- 结算界面 -->
+        <div id="resultScreen" class="hidden text-center max-w-lg mx-auto">
+            <!-- 动态内容 -->
+        </div>
     </div>
-
-    <div class="controls">
-      <button class="btn btn-l" id="btn-l" onclick="makeChoice('left')">
-        NO
-      </button>
-      <button class="btn btn-r" id="btn-r" onclick="makeChoice('right')">
-        YES
-      </button>
+    
+    <!-- 获奖弹窗 -->
+    <div id="prizeModal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div id="confettiContainer" class="fixed inset-0 pointer-events-none overflow-hidden"></div>
+        <div class="bg-gradient-to-b from-yellow-900/50 to-black rounded-2xl p-8 max-w-lg w-full border-2 border-yellow-500 neon-box-gold modal-animate relative z-10">
+            <div class="text-center mb-6">
+                <div class="text-6xl mb-4">🎉</div>
+                <h2 class="cyber-font text-3xl text-yellow-400 neon-gold mb-2">恭喜获得大奖！</h2>
+                <p class="text-white text-xl">PlayStation 5 游戏主机</p>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/PlayStation_5_and_DualSense_with_transparent_background.png/800px-PlayStation_5_and_DualSense_with_transparent_background.png" 
+                     alt="PS5" class="w-48 mx-auto my-4 ps5-glow"
+                     onerror="this.style.display='none';">
+            </div>
+            
+            <form id="addressForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">收件人姓名</label>
+                    <input type="text" required class="w-full bg-black/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-yellow-500 focus:outline-none" placeholder="请输入真实姓名">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">手机号码</label>
+                    <input type="tel" required class="w-full bg-black/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-yellow-500 focus:outline-none" placeholder="请输入手机号">
+                </div>
+                <div>
+                    <label class="block text-gray-400 text-sm mb-1">收货地址</label>
+                    <textarea required class="w-full bg-black/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-yellow-500 focus:outline-none" rows="2" placeholder="省市区+详细地址"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-orange-500 text-black font-bold hover:opacity-90 transition cyber-btn">
+                    ✅ 确认领取大奖
+                </button>
+            </form>
+            
+            <p class="text-xs text-gray-500 mt-4 text-center">奖品将在7个工作日内寄出，请确保信息准确</p>
+        </div>
     </div>
-
-    <!-- 失败/付费弹窗 -->
-    <div class="modal" id="modal-fail">
-      <h1 style="color: var(--neon-red); font-size: 2.5rem; margin: 0">
-        差一点!
-      </h1>
-      <p style="color: #ccc; margin: 10px 0">
-        你在第
-        <span id="fail-level" style="color: white; font-size: 1.5rem">9</span>
-        关倒下了
-      </p>
-
-      <div
-        style="
-          margin: 20px 0;
-          border: 1px solid var(--neon-gold);
-          padding: 15px;
-          border-radius: 5px;
-        "
-      >
-        <p style="color: var(--neon-gold); margin: 0; font-size: 1.1rem">
-          距离领取 PS5 仅差
-          <span id="fail-left" style="font-size: 1.5rem; font-weight: bold"
-            >3</span
-          >
-          关
-        </p>
-      </div>
-
-      <!-- 首次免费提示 -->
-      <div id="free-play-btn" style="display: none; width: 100%">
-        <button class="btn btn-r" onclick="restartGame()">
-          免费再试一次 (剩余1次)
-        </button>
-      </div>
-
-      <!-- 付费按钮 -->
-      <div id="pay-btn-group" style="display: none; width: 100%">
-        <p style="font-size: 0.8rem; color: #666">免费次数已用完</p>
-        <button class="btn btn-pay" onclick="showPayment()">
-          支付 ￥10.00 继续挑战
-        </button>
-      </div>
+    
+    <!-- 幸运奖弹窗 -->
+    <div id="luckyPrizeModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-gradient-to-b from-pink-900/50 to-black rounded-2xl p-6 max-w-md w-full border border-pink-500 neon-box-pink modal-animate">
+            <div class="text-center">
+                <div class="text-6xl mb-4">🍀</div>
+                <h2 class="cyber-font text-2xl text-pink-400 neon-pink mb-2">恭喜获得幸运奖！</h2>
+                <p class="text-white text-xl mb-4">霸屏券 x1</p>
+                <p class="text-gray-400 text-sm mb-6">可在任意直播间使用，让全场看到你的ID！</p>
+                <button onclick="closeLuckyPrizeModal()" class="px-8 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 transition cyber-btn">
+                    🎁 收下奖励
+                </button>
+            </div>
+        </div>
     </div>
-
-    <!-- 支付界面 (模拟) -->
-    <div class="modal" id="modal-payment">
-      <h2 style="color: white">支付 10 元</h2>
-      <div class="qr-placeholder">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
-          style="width: 100%; opacity: 0.8"
-        />
-        <!-- 实际使用时替换为你的收款码 -->
-      </div>
-      <p style="font-size: 0.8rem; color: #888">
-        (模拟支付环境：点击下方按钮直接成功)
-      </p>
-      <button
-        class="btn btn-r"
-        style="margin-top: 20px"
-        onclick="paymentSuccess()"
-      >
-        我已支付
-      </button>
-      <button
-        class="btn btn-l"
-        style="
-          margin-top: 10px;
-          background: transparent;
-          border: 1px solid #333;
-        "
-        onclick="closePayment()"
-      >
-        取消
-      </button>
-    </div>
-
-    <!-- 领奖表单 -->
-    <div class="modal" id="modal-win">
-      <img
-        src="https://gmedia.playstation.com/is/image/SIEPDC/ps5-product-thumbnail-01-en-14sep21?$facebook$"
-        style="width: 150px; margin-bottom: 10px"
-      />
-      <h1 style="color: var(--neon-gold)">挑战成功!</h1>
-      <p style="font-size: 0.9rem; color: #ccc; margin-bottom: 20px">
-        恭喜通关！请填写收货信息寄送奖品。
-      </p>
-
-      <div class="input-group">
-        <input type="text" class="input-field" placeholder="姓名" />
-        <input type="text" class="input-field" placeholder="手机号" />
-        <input type="text" class="input-field" placeholder="详细收货地址" />
-      </div>
-
-      <button class="btn btn-pay" onclick="submitAddress()">提交领奖</button>
-    </div>
+    
+    <!-- 粒子容器 -->
+    <div id="particleContainer" class="fixed inset-0 pointer-events-none z-40"></div>
 
     <script>
-      // --- 核心配置 ---
-      const TARGET_LEVEL = 12; // 12关
-      let level = 0;
-      let stats = [50, 50, 50, 50];
-      let isFirstPlay = localStorage.getItem("hasPlayedFree") !== "true"; // 检查是否玩过
-
-      // 事件库
-      const events = [
-        {
-          t: "捡到钱包",
-          d: "是否归还？",
-          l: "归还",
-          r: "私吞",
-          el: [0, 5, 0, 5],
-          er: [20, 0, 0, -20],
-          img: "https://images.unsplash.com/photo-1621504450162-e1529e4d6749?q=80&w=600",
-        },
-        {
-          t: "药剂推销",
-          d: "喝下神秘药水？",
-          l: "拒绝",
-          r: "喝！",
-          el: [0, 0, 0, 5],
-          er: [-10, 10, 10, -10],
-          img: "https://images.unsplash.com/photo-1614726365723-49cfae968c94?q=80&w=600",
-        },
-        {
-          t: "黑客勒索",
-          d: "支付赎金？",
-          l: "给钱",
-          r: "不给",
-          el: [-20, 0, 0, 0],
-          er: [0, -20, 0, -10],
-          img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600",
-        },
-        {
-          t: "深夜派对",
-          d: "参加富豪派对？",
-          l: "不去",
-          r: "去",
-          el: [0, -5, 0, 5],
-          er: [10, 5, 10, -15],
-          img: "https://images.unsplash.com/photo-1514525253440-b393452e2729?q=80&w=600",
-        },
-        {
-          t: "街头斗殴",
-          d: "帮忙吗？",
-          l: "路过",
-          r: "帮忙",
-          el: [0, 0, 0, -5],
-          er: [-10, 10, 0, 5],
-          img: "https://images.unsplash.com/photo-1509557965875-b88c97052f0e?q=80&w=600",
-        },
-        {
-          t: "机械改造",
-          d: "安装非法义体？",
-          l: "不要",
-          r: "要强力",
-          el: [0, 0, 0, 5],
-          er: [-15, 10, 10, -20],
-          img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600",
-        },
-      ];
-
-      let currentEvent = {};
-
-      function init() {
-        level = 0;
-        stats = [50, 50, 50, 50];
-        document.getElementById("modal-fail").style.display = "none";
-        document.getElementById("modal-win").style.display = "none";
-        document.getElementById("modal-payment").style.display = "none";
-
-        // 生成顶部进度点
-        let dotsHtml = "";
-        for (let i = 0; i < TARGET_LEVEL; i++)
-          dotsHtml += `<div class="progress-dot" id="dot-${i}"></div>`;
-        document.getElementById("progress-container").innerHTML = dotsHtml;
-
-        updateUI();
-        nextCard();
-      }
-
-      function updateUI() {
-        // 更新数值条
-        for (let i = 0; i < 4; i++) {
-          let el = document.getElementById(`bar-${i + 1}`);
-          el.style.width = stats[i] + "%";
-          if (stats[i] < 15 || stats[i] > 85)
-            el.style.boxShadow = "0 0 10px white";
-          else el.style.boxShadow = "none";
+        // 用户数据（模拟本地存储）
+        let userData = {
+            totalWins: 0,
+            hasFreePlayed: false,
+            totalPlays: 0
+        };
+        
+        // 从localStorage加载
+        function loadUserData() {
+            const saved = localStorage.getItem('neonEmpireUserData');
+            if (saved) {
+                userData = JSON.parse(saved);
+            }
+            updateStartScreen();
         }
-
-        // 更新文字和进度点
-        document.getElementById("rank-display").innerText = `Level ${level}`;
-        document.getElementById("weeks-left").innerText = TARGET_LEVEL - level;
-
-        for (let i = 0; i < TARGET_LEVEL; i++) {
-          let dot = document.getElementById(`dot-${i}`);
-          if (i < level) dot.classList.add("active");
-          else dot.classList.remove("active");
+        
+        // 保存到localStorage
+        function saveUserData() {
+            localStorage.setItem('neonEmpireUserData', JSON.stringify(userData));
         }
-      }
-
-      function nextCard() {
-        currentEvent = events[Math.floor(Math.random() * events.length)];
-        document.getElementById("card-title").innerText = currentEvent.t;
-        document.getElementById("card-desc").innerText = currentEvent.d;
-        document.getElementById("btn-l").innerText = currentEvent.l;
-        document.getElementById("btn-r").innerText = currentEvent.r;
-        document.getElementById("card-img").src = currentEvent.img;
-      }
-
-      function makeChoice(side) {
-        level++;
-        let effects = side === "left" ? currentEvent.el : currentEvent.er;
-
-        // --- 核心操控逻辑 ---
-        let difficultyMult = 1;
-
-        if (isFirstPlay) {
-          // 新手保护期 (1-7关)：伤害减半，甚至加血，确保不死
-          if (level <= 7) {
-            difficultyMult = 0.5;
-            // 强制修正：如果某个数值过低，反向加血
-            for (let i = 0; i < 4; i++) if (stats[i] < 30) stats[i] += 15;
-          }
-          // 必死期 (8-10关)：伤害爆表，确保用户死在黎明前
-          else if (level >= 8) {
-            difficultyMult = 3.0;
-            // 强制恶意干扰：直接扣除生命值较低的属性
-            for (let i = 0; i < 4; i++) if (stats[i] < 50) stats[i] -= 20;
-          }
-        } else {
-          // 付费用户：全程困难，但公平随机 (依然很难，保持0.01%概率)
-          difficultyMult = 2.0;
+        
+        // 更新开始界面
+        function updateStartScreen() {
+            document.getElementById('userWinCount').textContent = userData.totalWins;
+            const progress = (userData.totalWins / 18) * 100;
+            document.getElementById('winProgressBar').style.width = `${progress}%`;
+            
+            const remaining = 18 - userData.totalWins;
+            if (remaining > 0) {
+                document.getElementById('winProgressText').textContent = `再通关 ${remaining} 次即可获得 PS5 大奖！`;
+            } else {
+                document.getElementById('winProgressText').textContent = `🎉 已达成通关目标，等待大奖抽取！`;
+            }
+            
+            // 切换免费/付费标识
+            if (userData.hasFreePlayed) {
+                document.getElementById('freePlayBadge').classList.add('hidden');
+                document.getElementById('paidPlayBadge').classList.remove('hidden');
+            }
         }
-
-        for (let i = 0; i < 4; i++) {
-          // 应用数值
-          stats[i] += Math.floor(effects[i] * difficultyMult);
-          // 随机波动
-          stats[i] += Math.floor(Math.random() * 10) - 5;
-          if (stats[i] > 100) stats[i] = 100;
-          if (stats[i] < 0) stats[i] = 0;
+        
+        // 游戏状态
+        let gameState = {
+            route: 'female',
+            money: 0,
+            reputation: 0,
+            energy: 100,
+            stage: 0,
+            chapter: 0,
+            choices: [],
+            startTime: null,
+            totalTime: 300,
+            rank: 1247,
+            alive: true,
+            perfect: true,
+            pendingRoute: null
+        };
+        
+        // 故事章节（保持之前的故事内容，调整难度让第一次基本能通关15-16）
+        const stories = {
+            female: [
+                {
+                    scenes: [
+                        {
+                            character: '👩‍💼',
+                            name: '林娜',
+                            role: '酒吧老板',
+                            text: '"欢迎来到「霓虹之夜」，小妞。我听说你想在这混出名堂？" 她的眼神从你的脸庞缓缓扫过，嘴角勾起一抹意味深长的笑。',
+                            scene: '🌃',
+                            sceneName: '霓虹之夜·酒吧大厅',
+                            choices: [
+                                { text: '💋 "姐姐，我会让你知道什么是惊喜的。"', effect: { reputation: 20, money: 0 }, risk: 0.05, next: 1 },
+                                { text: '😊 "我会努力学习，不辜负您的期望。"', effect: { reputation: 5, money: 10 }, risk: 0, next: 1 },
+                                { text: '😏 "这酒吧以后会是我的。"', effect: { reputation: 30, money: -10 }, risk: 0.15, next: 1 }
+                            ]
+                        },
+                        {
+                            character: '🧑‍🎤',
+                            name: '艾伦',
+                            role: '当红男团队长',
+                            text: '他靠近你的耳边，低沉的嗓音带着磁性："新来的？我喜欢有野心的女人..." 他的手指轻轻划过你的下巴。',
+                            scene: '🍸',
+                            sceneName: 'VIP包厢',
+                            choices: [
+                                { text: '🔥 顺势靠近他，在他耳边低语："那要看你配不配得上。"', effect: { reputation: 25, energy: -10 }, risk: 0.08, next: 2 },
+                                { text: '😌 后退一步，微笑："工作时间，保持专业。"', effect: { reputation: 10, money: 20 }, risk: 0, next: 2 },
+                                { text: '💢 "别碰我，你不是我的菜。"', effect: { reputation: -10, energy: 10 }, risk: 0.2, next: 2 }
+                            ]
+                        },
+                        {
+                            character: '👯‍♀️',
+                            name: '小雨',
+                            role: '资深调酒师',
+                            text: '"妹妹，这里有个潜规则..." 她压低声音，"VIP客人点名要你陪酒，接还是不接？这可关系到你能不能留下来。"',
+                            scene: '🍹',
+                            sceneName: '吧台后方',
+                            choices: [
+                                { text: '🎭 "接！但我要用我的方式。"', effect: { money: 50, reputation: 15, energy: -20 }, risk: 0.1, next: 'stage1' },
+                                { text: '🙅‍♀️ "不接，我靠实力说话。"', effect: { reputation: 20, money: -20 }, risk: 0.12, next: 'stage1' },
+                                { text: '🤔 "能不能告诉我更多情况？"', effect: { reputation: 5, money: 10 }, risk: 0.02, next: 'stage1' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    scenes: [
+                        {
+                            character: '🎤',
+                            name: '你',
+                            role: '新晋领班',
+                            text: '三个月后，你已经成为酒吧的明星领班。今晚有个大客户——传说中的"金融之狼"要来。所有人都在议论他的品味...和床上功夫。',
+                            scene: '✨',
+                            sceneName: '更衣室',
+                            choices: [
+                                { text: '👗 换上那套最性感的礼服，今晚势在必得', effect: { reputation: 30, energy: -15 }, risk: 0.1, next: 1 },
+                                { text: '💼 保持职业装扮，用专业征服他', effect: { reputation: 15, money: 30 }, risk: 0.05, next: 1 },
+                                { text: '🎭 先观察，再决定策略', effect: { reputation: 10, energy: 5 }, risk: 0.02, next: 1 }
+                            ]
+                        },
+                        {
+                            character: '💼',
+                            name: '陈默',
+                            role: '金融之狼',
+                            text: '"有意思..." 他放下红酒杯，眼中闪过一丝玩味，"第一个敢直视我眼睛的女人。告诉我，你想要什么？"',
+                            scene: '🥂',
+                            sceneName: '顶层VIP厅',
+                            choices: [
+                                { text: '💰 "投资。我要开自己的酒吧。"', effect: { money: 100, reputation: 20 }, risk: 0.12, next: 2 },
+                                { text: '💋 "现在？我想要你今晚的时间。"', effect: { reputation: 50, energy: -30 }, risk: 0.18, next: 2 },
+                                { text: '🎯 "合作。互利共赢的那种。"', effect: { money: 60, reputation: 30 }, risk: 0.08, next: 2 }
+                            ]
+                        },
+                        {
+                            character: '😈',
+                            name: '林娜',
+                            role: '酒吧老板',
+                            text: '"你和陈默走得很近啊..." 她的指甲敲打着桌面，"别忘了，是谁把你带进这个圈子的。要分清楚，谁才是你的主人。"',
+                            scene: '🌹',
+                            sceneName: '老板办公室',
+                            choices: [
+                                { text: '⚔️ "林姐，这里早晚是我的。谢谢你的教导。"', effect: { reputation: 40, money: -50 }, risk: 0.25, next: 'stage2' },
+                                { text: '🙇‍♀️ "姐，我永远记得您的恩情。"', effect: { reputation: -10, money: 50 }, risk: 0.05, next: 'stage2' },
+                                { text: '🤝 "我们可以成为合作伙伴，而不是对手。"', effect: { reputation: 25, money: 25 }, risk: 0.1, next: 'stage2' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    scenes: [
+                        {
+                            character: '📱',
+                            name: '匿名',
+                            role: '神秘来电',
+                            text: '"我有你和陈默的照片。50万，或者明天全网都会知道金融之狼的新欢是个酒吧女。" 电话那头传来阴冷的笑声。',
+                            scene: '🌙',
+                            sceneName: '深夜·公寓',
+                            choices: [
+                                { text: '💪 "发吧。我不怕。顺便帮我炒作一下。"', effect: { reputation: -30, energy: -20 }, risk: 0.3, next: 1, special: 'brave' },
+                                { text: '🤫 "见面谈。我想知道你还有什么。"', effect: { money: -20, reputation: 10 }, risk: 0.15, next: 1 },
+                                { text: '📞 立刻打给陈默，让他处理', effect: { money: 30, reputation: -20 }, risk: 0.1, next: 1 }
+                            ]
+                        },
+                        {
+                            character: '👊',
+                            name: '黑帮老大',
+                            role: '地下势力',
+                            text: '"小妞，你动了我的地盘。" 几个黑衣人围住了你，"要么给我干活，要么...你懂的。"',
+                            scene: '🚨',
+                            sceneName: '小巷·危机',
+                            choices: [
+                                { text: '💣 亮出藏在包里的录音笔："你确定要这么做？"', effect: { reputation: 60, money: 50 }, risk: 0.35, next: 2 },
+                                { text: '🏃‍♀️ 趁机逃跑，先保命', effect: { energy: -40, reputation: -20 }, risk: 0.2, next: 2 },
+                                { text: '🤝 "谈条件。我能给你更多。"', effect: { money: -80, reputation: 20 }, risk: 0.12, next: 2 }
+                            ]
+                        },
+                        {
+                            character: '💔',
+                            name: '艾伦',
+                            role: '旧情人',
+                            text: '他出现在你面前，眼眶微红："为什么选他不选我？我可以给你一切..." 他握住你的手，"最后一次机会，跟我走。"',
+                            scene: '💫',
+                            sceneName: '天台·抉择',
+                            choices: [
+                                { text: '❄️ "艾伦，爱情不是交易。再见。"', effect: { reputation: 30, energy: -10 }, risk: 0.08, next: 'stage3' },
+                                { text: '💕 "好，我跟你走。"', effect: { reputation: -50, money: -100 }, risk: 0.5, next: 'badend' },
+                                { text: '🎭 "给我时间，让我处理完手头的事。"', effect: { reputation: 10, energy: -5 }, risk: 0.15, next: 'stage3' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    scenes: [
+                        {
+                            character: '👑',
+                            name: '你',
+                            role: '新晋合伙人',
+                            text: '林娜的酒吧出事了，资金链断裂。你手握陈默的投资意向书，站在这个十字路口。是时候了。',
+                            scene: '🌆',
+                            sceneName: '城市之巅',
+                            choices: [
+                                { text: '🗡️ 收购！这一天我等太久了', effect: { money: 200, reputation: 50 }, risk: 0.2, next: 1 },
+                                { text: '🤝 "林姐，我来帮你，但我要40%股份。"', effect: { money: 100, reputation: 70 }, risk: 0.1, next: 1 },
+                                { text: '💀 "看看还有谁想分一杯羹"', effect: { money: 150, reputation: 30 }, risk: 0.18, next: 1 }
+                            ]
+                        },
+                        {
+                            character: '🎪',
+                            name: '系统',
+                            role: '最终试炼',
+                            text: '所有势力都在看着你。黑帮要分成，陈默要回报，林娜要复仇，艾伦还在纠缠。最后一步，你选择...',
+                            scene: '⚡',
+                            sceneName: '终局之战',
+                            choices: [
+                                { text: '👸 全部收入囊中——我才是这里的女王', effect: { money: 300, reputation: 100 }, risk: 0.4, next: 2, final: true },
+                                { text: '🌹 与各方和解，建立联盟', effect: { money: 200, reputation: 150 }, risk: 0.15, next: 2, final: true },
+                                { text: '🔥 引爆所有秘密，重新洗牌', effect: { money: 100, reputation: 200 }, risk: 0.28, next: 2, final: true }
+                            ]
+                        },
+                        {
+                            character: '🏆',
+                            name: '命运',
+                            role: '最终审判',
+                            text: '你的帝国即将建成。但命运还有最后一道考验——"你准备好了吗，未来的BOSS？"',
+                            scene: '🎰',
+                            sceneName: '命运之轮',
+                            choices: [
+                                { text: '👑 "我生来就是女王。"', effect: { reputation: 50 }, risk: 0.55, next: 'ending', final: true },
+                                { text: '🙏 "感谢所有帮助过我的人。"', effect: { reputation: 30, money: 50 }, risk: 0.35, next: 'ending', final: true },
+                                { text: '😈 "游戏才刚刚开始。"', effect: { reputation: 100, money: -50 }, risk: 0.45, next: 'ending', final: true }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            male: [
+                {
+                    scenes: [
+                        {
+                            character: '👨‍💼',
+                            name: '老王',
+                            role: '酒吧老板',
+                            text: '"小子，想在我这混？" 他吐出一口烟圈，"先证明你有那个能耐让小姐们心甘情愿为你卖酒。"',
+                            scene: '🌃',
+                            sceneName: '霓虹之夜·后台',
+                            choices: [
+                                { text: '😎 "王哥，三个月后这位置是我的。"', effect: { reputation: 25, money: 0 }, risk: 0.08, next: 1 },
+                                { text: '🙏 "我会用业绩说话。"', effect: { reputation: 10, money: 15 }, risk: 0.02, next: 1 },
+                                { text: '💪 "我不仅要这位置，还要整个酒吧。"', effect: { reputation: 35, money: -10 }, risk: 0.18, next: 1 }
+                            ]
+                        },
+                        {
+                            character: '💃',
+                            name: '小美',
+                            role: '花魁舞娘',
+                            text: '她款款走来，红唇微启："新来的弟弟？" 她的手指划过你的胸膛，"想在这生存，得先学会讨好女人。要我教你吗？"',
+                            scene: '🍸',
+                            sceneName: '舞池边',
+                            choices: [
+                                { text: '🔥 握住她的手："姐姐想教什么，我都学。"', effect: { reputation: 25, energy: -10 }, risk: 0.08, next: 2 },
+                                { text: '😏 "我更想教你点新东西。"', effect: { reputation: 35, money: -10 }, risk: 0.15, next: 2 },
+                                { text: '🙂 "谢谢，但我想靠自己。"', effect: { reputation: 5, money: 20 }, risk: 0.05, next: 2 }
+                            ]
+                        },
+                        {
+                            character: '👔',
+                            name: '阿杰',
+                            role: '领班',
+                            text: '"兄弟，富婆包场，点名要帅哥作陪。去不去？小费五位数起。" 他意味深长地看着你。',
+                            scene: '💰',
+                            sceneName: '更衣室',
+                            choices: [
+                                { text: '🎭 "去！有钱不赚是傻子。"', effect: { money: 80, reputation: 10, energy: -25 }, risk: 0.12, next: 'stage1' },
+                                { text: '🚫 "我不做那种事。"', effect: { reputation: 15, money: -10 }, risk: 0.1, next: 'stage1' },
+                                { text: '🤔 "能给我更多细节吗？"', effect: { reputation: 5, money: 10 }, risk: 0.05, next: 'stage1' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    scenes: [
+                        {
+                            character: '💎',
+                            name: '刘总',
+                            role: '神秘富婆',
+                            text: '"我喜欢有野心的男人。" 她放下香槟杯，"告诉我，你的野心是什么？让我看看值不值得投资你。"',
+                            scene: '🥂',
+                            sceneName: '私人会所',
+                            choices: [
+                                { text: '👑 "整个城市的夜场，都会是我的。"', effect: { reputation: 40, money: 100 }, risk: 0.15, next: 1 },
+                                { text: '💋 "现在，我只想投资我们之间的时间。"', effect: { reputation: 50, energy: -30 }, risk: 0.2, next: 1 },
+                                { text: '💼 "我想要的是合作伙伴，不是金主。"', effect: { money: 50, reputation: 30 }, risk: 0.1, next: 1 }
+                            ]
+                        },
+                        {
+                            character: '😈',
+                            name: '老王',
+                            role: '酒吧老板',
+                            text: '"小子，你的野心我看到了。" 他放下酒杯，"但你踩过界了。要么滚，要么...收购我的股份。你选。"',
+                            scene: '⚔️',
+                            sceneName: '老板办公室',
+                            choices: [
+                                { text: '💰 "开价吧。"', effect: { money: -150, reputation: 50 }, risk: 0.15, next: 2 },
+                                { text: '🤝 "我们可以一起做大。"', effect: { money: 30, reputation: 30 }, risk: 0.1, next: 2 },
+                                { text: '🔥 "你的股份值多少，看我心情。"', effect: { reputation: 40, money: 0 }, risk: 0.28, next: 2 }
+                            ]
+                        },
+                        {
+                            character: '💔',
+                            name: '小美',
+                            role: '旧情人',
+                            text: '她流着泪堵住你："你变了...那个说要保护我的男人去哪了？" 她抓住你的衣领，"带我走，离开这个地方。"',
+                            scene: '🌙',
+                            sceneName: '后巷',
+                            choices: [
+                                { text: '❄️ "对不起，我选择了这条路。"', effect: { reputation: 20, energy: -10 }, risk: 0.08, next: 'stage2' },
+                                { text: '💕 "好，我们一起离开。"', effect: { reputation: -60, money: -100 }, risk: 0.5, next: 'badend' },
+                                { text: '🎭 "等我，很快就会接你走。"', effect: { reputation: 5, energy: -5 }, risk: 0.18, next: 'stage2' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    scenes: [
+                        {
+                            character: '🔫',
+                            name: '黑帮',
+                            role: '地下势力',
+                            text: '"新总裁？" 他们围住你，"这地盘的保护费，你打算怎么交？还是说，你想用另一种方式...合作？"',
+                            scene: '🚨',
+                            sceneName: '地下停车场',
+                            choices: [
+                                { text: '💰 "开价。我付得起。"', effect: { money: -100, reputation: 10 }, risk: 0.1, next: 1 },
+                                { text: '🤝 "合作听起来不错，说说看。"', effect: { money: 50, reputation: -20 }, risk: 0.18, next: 1 },
+                                { text: '💣 亮出藏起来的录音："你们确定？"', effect: { reputation: 70, money: 30 }, risk: 0.35, next: 1 }
+                            ]
+                        },
+                        {
+                            character: '👨‍💼',
+                            name: '竞争对手',
+                            role: '夜店大亨',
+                            text: '"听说有个小子想在我的地盘称王？" 他笑了，"来，跟我喝一杯，谈谈你的命值多少钱。"',
+                            scene: '🏙️',
+                            sceneName: '对手的酒吧',
+                            choices: [
+                                { text: '😎 "不如谈谈你的酒吧值多少。"', effect: { reputation: 50, money: 50 }, risk: 0.25, next: 2 },
+                                { text: '🤝 "前辈，指教一下晚辈。"', effect: { reputation: 20, money: 30 }, risk: 0.1, next: 2 },
+                                { text: '🔥 直接把他的酒泼在地上', effect: { reputation: 60, money: -50 }, risk: 0.4, next: 2 }
+                            ]
+                        },
+                        {
+                            character: '💃',
+                            name: '刘总',
+                            role: '金主',
+                            text: '她出现在你面前："我可以帮你搞定所有人。但你要成为...我的人。" 她的眼神充满占有欲。',
+                            scene: '💫',
+                            sceneName: '顶楼套房',
+                            choices: [
+                                { text: '👑 "我是我自己的人。但我们可以并肩作战。"', effect: { reputation: 40, money: 80 }, risk: 0.15, next: 'stage3' },
+                                { text: '💋 "今晚，我是你的。"', effect: { money: 150, reputation: 20 }, risk: 0.22, next: 'stage3' },
+                                { text: '🚫 "对不起，我不是任何人的附属品。"', effect: { reputation: 50, money: -50 }, risk: 0.28, next: 'stage3' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    scenes: [
+                        {
+                            character: '👔',
+                            name: '你',
+                            role: '夜店新贵',
+                            text: '一切准备就绪。老王的股份、刘总的资金、黑帮的关系...只差最后一步，你就是这个城市的夜王。',
+                            scene: '🌆',
+                            sceneName: '帝国大厦顶楼',
+                            choices: [
+                                { text: '⚔️ "所有人都要听我的命令。"', effect: { money: 200, reputation: 60 }, risk: 0.28, next: 1 },
+                                { text: '🤝 "让我们建立一个联盟。"', effect: { money: 120, reputation: 80 }, risk: 0.12, next: 1 },
+                                { text: '🎭 "在暗处掌控一切更安全。"', effect: { money: 150, reputation: 40 }, risk: 0.18, next: 1 }
+                            ]
+                        },
+                        {
+                            character: '🎪',
+                            name: '系统',
+                            role: '最终试炼',
+                            text: '所有人都在等你的决定。刘总、小美、黑帮、竞争对手...这个城市的夜晚属于谁？',
+                            scene: '⚡',
+                            sceneName: '命运时刻',
+                            choices: [
+                                { text: '👑 独霸天下——我就是规则', effect: { money: 300, reputation: 100 }, risk: 0.4, next: 2, final: true },
+                                { text: '🤝 共建帝国——团结一切力量', effect: { money: 200, reputation: 150 }, risk: 0.15, next: 2, final: true },
+                                { text: '🔥 推翻重来——旧秩序必须死', effect: { money: 100, reputation: 200 }, risk: 0.3, next: 2, final: true }
+                            ]
+                        },
+                        {
+                            character: '🏆',
+                            name: '命运',
+                            role: '最终审判',
+                            text: '帝国的王座就在眼前。你准备好了吗？',
+                            scene: '🎰',
+                            sceneName: '命运之轮',
+                            choices: [
+                                { text: '👑 "这座城市，只能有一个王。"', effect: { reputation: 50 }, risk: 0.55, next: 'ending', final: true },
+                                { text: '🙏 "感谢一路走来的所有人。"', effect: { reputation: 30, money: 50 }, risk: 0.35, next: 'ending', final: true },
+                                { text: '😈 "接下来，我要的更多。"', effect: { reputation: 100, money: -50 }, risk: 0.45, next: 'ending', final: true }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+        
+        let timerInterval;
+        let currentSceneIndex = 0;
+        let currentStageIndex = 0;
+        
+        // 检查并开始游戏
+        function checkAndStartGame(route) {
+            gameState.pendingRoute = route;
+            
+            if (!userData.hasFreePlayed) {
+                // 第一次免费
+                startGame(route);
+            } else {
+                // 需要支付
+                showPaymentModal();
+            }
         }
-
-        updateUI();
-        setTimeout(checkStatus, 200);
-      }
-
-      function checkStatus() {
-        let dead = false;
-        if (
-          stats[0] <= 0 ||
-          stats[1] <= 0 ||
-          stats[2] >= 100 ||
-          stats[3] <= 0 ||
-          stats[3] >= 100
-        )
-          dead = true;
-
-        if (dead) {
-          showFailModal();
-        } else if (level >= TARGET_LEVEL) {
-          document.getElementById("modal-win").style.display = "flex";
-        } else {
-          nextCard();
+        
+        // 显示支付弹窗
+        function showPaymentModal() {
+            document.getElementById('modalWinCount').textContent = userData.totalWins;
+            document.getElementById('modalRemaining').textContent = 18 - userData.totalWins;
+            document.getElementById('paymentModal').classList.remove('hidden');
         }
-      }
-
-      function showFailModal() {
-        document.getElementById("modal-fail").style.display = "flex";
-        document.getElementById("fail-level").innerText = level;
-        document.getElementById("fail-left").innerText = TARGET_LEVEL - level;
-
-        // 判断是否第一次玩
-        if (isFirstPlay) {
-          // 第一次：记录状态，显示"再试一次"（其实这里逻辑上已经是第一次结束了，看你想不想给第二次免费机会）
-          // 根据需求描述："第一次免费...免费第一次后就需要支付"
-          // 所以第一次死掉后，按钮应该变成支付
-          localStorage.setItem("hasPlayedFree", "true");
-          isFirstPlay = false; // 内存状态更新
-
-          // 显示支付按钮（因为刚用完了免费机会）
-          document.getElementById("free-play-btn").style.display = "none";
-          document.getElementById("pay-btn-group").style.display = "block";
-        } else {
-          // 已经不是第一次了，直接显示支付
-          document.getElementById("free-play-btn").style.display = "none";
-          document.getElementById("pay-btn-group").style.display = "block";
+        
+        // 关闭支付弹窗
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
         }
-      }
-
-      function showPayment() {
-        document.getElementById("modal-payment").style.display = "flex";
-      }
-
-      function closePayment() {
-        document.getElementById("modal-payment").style.display = "none";
-      }
-
-      function paymentSuccess() {
-        // 模拟支付成功
-        document.getElementById("modal-payment").style.display = "none";
-        document.getElementById("modal-fail").style.display = "none";
-        // 支付后重新开始
-        init();
-      }
-
-      function restartGame() {
-        // 这个函数一般只在逻辑需要"重置"时调用
-        init();
-      }
-
-      function submitAddress() {
-        let inputs = document.querySelectorAll(".input-field");
-        if (inputs[0].value && inputs[1].value) {
-          alert("提交成功！奖品将在7个工作日内寄出。");
-          location.reload();
-        } else {
-          alert("请填写完整信息");
+        
+        // 处理支付（模拟）
+        function processPayment() {
+            // 模拟支付成功
+            closePaymentModal();
+            startGame(gameState.pendingRoute);
         }
-      }
-
-      // 启动检查
-      // 如果是第一次进入页面，且localStorage没有记录，则视为免费用户
-      // 初始化逻辑在 HTML 加载后自动运行
-      init();
+        
+        // 开始游戏
+        function startGame(route) {
+            gameState.route = route;
+            gameState.startTime = Date.now();
+            gameState.money = route === 'female' ? 50 : 80;
+            gameState.reputation = route === 'female' ? 30 : 20;
+            gameState.energy = 100;
+            gameState.stage = 0;
+            gameState.alive = true;
+            gameState.perfect = true;
+            currentSceneIndex = 0;
+            currentStageIndex = 0;
+            
+            // 标记已使用免费次数
+            if (!userData.hasFreePlayed) {
+                userData.hasFreePlayed = true;
+                saveUserData();
+            }
+            
+            userData.totalPlays++;
+            saveUserData();
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('statusBar').classList.remove('hidden');
+            
+            document.getElementById('winCount').textContent = userData.totalWins;
+            
+            updateStatus();
+            startTimer();
+            showScene();
+            
+            createParticles();
+        }
+        
+        // 显示场景
+        function showScene() {
+            const route = stories[gameState.route];
+            if (currentStageIndex >= route.length) {
+                showEnding(true);
+                return;
+            }
+            
+            const stage = route[currentStageIndex];
+            if (currentSceneIndex >= stage.scenes.length) {
+                currentStageIndex++;
+                currentSceneIndex = 0;
+                gameState.stage = currentStageIndex;
+                updateProgress();
+                
+                if (currentStageIndex >= route.length) {
+                    showEnding(true);
+                    return;
+                }
+            }
+            
+            const scene = stage.scenes[currentSceneIndex];
+            
+            document.getElementById('characterEmoji').textContent = scene.character;
+            document.getElementById('characterName').textContent = scene.name;
+            document.getElementById('characterRole').textContent = scene.role;
+            document.getElementById('storyText').innerHTML = scene.text;
+            document.getElementById('sceneEmoji').textContent = scene.scene;
+            document.getElementById('sceneName').textContent = scene.sceneName;
+            
+            const choicesArea = document.getElementById('choicesArea');
+            choicesArea.innerHTML = '';
+            
+            scene.choices.forEach((choice, index) => {
+                const isRisky = choice.risk > 0.2;
+                const btn = document.createElement('button');
+                btn.className = `choice-card ${isRisky ? 'risky' : ''} w-full p-4 rounded-xl text-left fade-in-up`;
+                btn.style.animationDelay = `${index * 0.1}s`;
+                
+                let riskLabel = '';
+                if (choice.risk > 0.4) riskLabel = '<span class="text-red-500 text-xs ml-2">⚠️ 极度危险</span>';
+                else if (choice.risk > 0.2) riskLabel = '<span class="text-orange-500 text-xs ml-2">⚡ 高风险</span>';
+                else if (choice.risk > 0.1) riskLabel = '<span class="text-yellow-500 text-xs ml-2">~ 有风险</span>';
+                
+                btn.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-200">${choice.text}</span>
+                        ${riskLabel}
+                    </div>
+                    <div class="flex gap-3 mt-2 text-xs text-gray-500">
+                        ${choice.effect.money ? `<span class="${choice.effect.money > 0 ? 'text-green-400' : 'text-red-400'}">💰${choice.effect.money > 0 ? '+' : ''}${choice.effect.money}</span>` : ''}
+                        ${choice.effect.reputation ? `<span class="${choice.effect.reputation > 0 ? 'text-pink-400' : 'text-red-400'}">🔥${choice.effect.reputation > 0 ? '+' : ''}${choice.effect.reputation}</span>` : ''}
+                        ${choice.effect.energy ? `<span class="${choice.effect.energy > 0 ? 'text-cyan-400' : 'text-orange-400'}">⚡${choice.effect.energy > 0 ? '+' : ''}${choice.effect.energy}</span>` : ''}
+                    </div>
+                `;
+                
+                btn.onclick = () => makeChoice(choice, index);
+                choicesArea.appendChild(btn);
+            });
+            
+            updateRank();
+        }
+        
+        // 做出选择
+        function makeChoice(choice, index) {
+            gameState.money += choice.effect.money || 0;
+            gameState.reputation += choice.effect.reputation || 0;
+            gameState.energy += choice.effect.energy || 0;
+            
+            gameState.choices.push({
+                stage: currentStageIndex,
+                scene: currentSceneIndex,
+                choice: index,
+                risk: choice.risk
+            });
+            
+            const roll = Math.random();
+            if (roll < choice.risk) {
+                if (choice.risk > 0.4) {
+                    gameState.alive = false;
+                    showGameOver('风险太高，你的野心吞噬了你...');
+                    return;
+                } else {
+                    gameState.money = Math.max(0, gameState.money - 50);
+                    gameState.reputation = Math.max(0, gameState.reputation - 20);
+                    gameState.perfect = false;
+                    showWarning();
+                }
+            } else if (choice.risk > 0.2) {
+                gameState.money += 30;
+                gameState.reputation += 15;
+                showSuccess();
+            }
+            
+            if (gameState.energy <= 0) {
+                showGameOver('你的精力耗尽了...这个世界不是为弱者准备的。');
+                return;
+            }
+            
+            updateStatus();
+            
+            if (choice.next === 'badend') {
+                showGameOver('你选择了爱情，却失去了一切。这个世界没有童话。');
+                return;
+            }
+            
+            if (choice.next === 'ending') {
+                finalJudgement();
+                return;
+            }
+            
+            if (typeof choice.next === 'string' && choice.next.startsWith('stage')) {
+                currentStageIndex++;
+                currentSceneIndex = 0;
+            } else {
+                currentSceneIndex++;
+            }
+            
+            setTimeout(showScene, 500);
+        }
+        
+        function updateStatus() {
+            document.getElementById('money').textContent = gameState.money;
+            document.getElementById('reputation').textContent = gameState.reputation;
+            document.getElementById('energy').textContent = Math.max(0, gameState.energy);
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const totalStages = 4;
+            const progress = (currentStageIndex / totalStages) * 100;
+            document.getElementById('progressBar').style.width = `${Math.min(progress, 100)}%`;
+        }
+        
+        function updateRank() {
+            const rankChange = Math.floor(Math.random() * 200) - 100;
+            gameState.rank = Math.max(1, gameState.rank + rankChange);
+            document.getElementById('currentRank').textContent = `#${gameState.rank.toLocaleString()}`;
+        }
+        
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+                const remaining = gameState.totalTime - elapsed;
+                
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    showGameOver('时间到！帝国梦碎...');
+                    return;
+                }
+                
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                document.getElementById('gameTimer').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (remaining < 60) {
+                    document.getElementById('gameTimer').classList.add('heartbeat');
+                }
+            }, 1000);
+        }
+        
+        function showWarning() {
+            const container = document.getElementById('gameContainer');
+            container.classList.add('shake');
+            setTimeout(() => container.classList.remove('shake'), 500);
+        }
+        
+        function showSuccess() {
+            createSuccessParticles();
+        }
+        
+        function finalJudgement() {
+            let successRate = 0.5;
+            
+            if (gameState.money >= 300) successRate += 0.1;
+            if (gameState.reputation >= 150) successRate += 0.1;
+            if (gameState.energy >= 50) successRate += 0.05;
+            if (gameState.perfect) successRate += 0.15;
+            
+            successRate = Math.min(successRate, 0.9);
+            
+            const roll = Math.random();
+            
+            showFateWheel(roll < successRate);
+        }
+        
+        function showFateWheel(success) {
+            const choicesArea = document.getElementById('choicesArea');
+            choicesArea.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="text-6xl mb-4 heartbeat">🎰</div>
+                    <p class="text-xl text-gray-300 mb-4">命运之轮正在转动...</p>
+                    <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-pink-500 via-yellow-500 to-cyan-500 animate-pulse" style="animation: progressGlow 0.5s linear infinite;"></div>
+                    </div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                if (success) {
+                    showEnding(true);
+                } else {
+                    showGameOver('命运女神没有眷顾你...差一点就成功了。');
+                }
+            }, 3000);
+        }
+        
+        function showEnding(won) {
+            clearInterval(timerInterval);
+            
+            // 增加通关次数
+            userData.totalWins++;
+            saveUserData();
+            
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('statusBar').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+            
+            const title = gameState.route === 'female' ? '女王BOSS' : '霸道总裁';
+            const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const remaining = 18 - userData.totalWins;
+            
+            // 检查是否获得大奖（达到18次且0.01%概率）
+            let grandPrize = false;
+            let luckyPrize = false;
+            
+            if (userData.totalWins >= 18) {
+                // 0.01%概率
+                if (Math.random() < 0.0001) {
+                    grandPrize = true;
+                } else if (Math.random() < 0.05) {
+                    luckyPrize = true;
+                }
+            }
+            
+            if (grandPrize) {
+                // 显示大奖弹窗
+                setTimeout(() => {
+                    showGrandPrizeModal();
+                }, 1000);
+            }
+            
+            if (luckyPrize) {
+                setTimeout(() => {
+                    showLuckyPrizeModal();
+                }, 1000);
+            }
+            
+            document.getElementById('resultScreen').innerHTML = `
+                <div class="fade-in-up">
+                    <div class="text-8xl mb-6 prize-float">👑</div>
+                    <h1 class="cyber-font text-4xl text-yellow-400 neon-gold mb-4">🎉 通关成功！🎉</h1>
+                    <p class="text-2xl text-white mb-2">你成为了传说中的</p>
+                    <p class="cyber-font text-3xl text-pink-400 neon-pink mb-6">${title}</p>
+                    
+                    <div class="bg-gradient-to-r from-green-900/30 to-cyan-900/30 rounded-2xl p-4 mb-6 border border-green-500/50">
+                        <p class="text-green-400 cyber-font mb-2">🎯 通关进度</p>
+                        <div class="flex items-center justify-center gap-4 text-2xl">
+                            <span class="cyber-font text-white">${userData.totalWins}</span>
+                            <span class="text-gray-500">/</span>
+                            <span class="cyber-font text-yellow-400">18</span>
+                        </div>
+                        <div class="h-3 bg-gray-800 rounded-full overflow-hidden mt-3">
+                            <div class="win-progress h-full rounded-full" style="width: ${Math.min((userData.totalWins / 18) * 100, 100)}%"></div>
+                        </div>
+                        ${remaining > 0 ? `
+                            <p class="text-gray-400 mt-3">距离 PS5 大奖还需通关 <span class="text-yellow-400 cyber-font">${remaining}</span> 次！</p>
+                        ` : `
+                            <p class="text-yellow-400 mt-3">🎰 已达成通关目标，进入大奖抽取池！</p>
+                        `}
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="bg-black/30 rounded-xl p-4">
+                            <p class="text-3xl">💰</p>
+                            <p class="cyber-font text-green-400 text-xl">${gameState.money}</p>
+                            <p class="text-xs text-gray-500">最终资金</p>
+                        </div>
+                        <div class="bg-black/30 rounded-xl p-4">
+                            <p class="text-3xl">🔥</p>
+                            <p class="cyber-font text-pink-400 text-xl">${gameState.reputation}</p>
+                            <p class="text-xs text-gray-500">最终声望</p>
+                        </div>
+                        <div class="bg-black/30 rounded-xl p-4">
+                            <p class="text-3xl">⏱️</p>
+                            <p class="cyber-font text-cyan-400 text-xl">${minutes}:${seconds.toString().padStart(2, '0')}</p>
+                            <p class="text-xs text-gray-500">通关时间</p>
+                        </div>
+                    </div>
+                    
+                    <div class="neon-box-gold rounded-xl p-4 bg-black/30 mb-6">
+                        <p class="text-yellow-400 text-sm">🎮 继续挑战，PS5 大奖等你来拿！</p>
+                        <p class="text-xs text-gray-500 mt-1">大奖概率: 0.01% | 幸运奖: 霸屏券</p>
+                    </div>
+                    
+                    <button onclick="location.reload()" class="cyber-btn bg-gradient-to-r from-pink-600 to-purple-600 px-8 py-3 rounded-xl text-lg font-bold hover:opacity-90 neon-box-pink">
+                        🔄 再来一次 ${userData.hasFreePlayed ? '(¥10)' : '(免费)'}
+                    </button>
+                </div>
+            `;
+            
+            createVictoryParticles();
+        }
+        
+        function showGameOver(reason) {
+            clearInterval(timerInterval);
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('statusBar').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+            
+            const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const remaining = 18 - userData.totalWins;
+            
+            document.getElementById('resultScreen').innerHTML = `
+                <div class="fade-in-up">
+                    <div class="text-8xl mb-6">💀</div>
+                    <h1 class="cyber-font text-3xl text-red-500 mb-4">游戏结束</h1>
+                    <p class="text-gray-300 mb-6">${reason}</p>
+                    
+                    <div class="bg-red-900/20 rounded-xl p-4 mb-6 border border-red-500/30">
+                        <p class="text-red-400 text-lg mb-2">😢 距离 PS5 大奖还差 <span class="cyber-font text-yellow-400">${remaining}</span> 次通关</p>
+                        <p class="text-gray-400 text-sm">当前进度: ${userData.totalWins} / 18</p>
+                    </div>
+                    
+                    <div class="bg-black/50 rounded-xl p-6 mb-6 border border-gray-700">
+                        <p class="text-gray-400 mb-4">本局数据:</p>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <p class="cyber-font text-green-400 text-xl">${gameState.money}</p>
+                                <p class="text-xs text-gray-500">资金</p>
+                            </div>
+                            <div>
+                                <p class="cyber-font text-pink-400 text-xl">${gameState.reputation}</p>
+                                <p class="text-xs text-gray-500">声望</p>
+                            </div>
+                            <div>
+                                <p class="cyber-font text-cyan-400 text-xl">${minutes}:${seconds.toString().padStart(2, '0')}</p>
+                                <p class="text-xs text-gray-500">游戏时间</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6 neon-box-gold rounded-xl p-4 bg-black/30">
+                        <p class="text-yellow-400 text-sm">🎮 别灰心！PS5 大奖依然在等你！</p>
+                        <p class="text-xs text-gray-500 mt-1">大奖概率: 0.01% | 当前在线: 12,847</p>
+                    </div>
+                    
+                    <button onclick="location.reload()" class="cyber-btn bg-gradient-to-r from-red-600 to-orange-600 px-8 py-3 rounded-xl text-lg font-bold hover:opacity-90">
+                        🔄 再试一次 ${userData.hasFreePlayed ? '(¥10)' : '(免费)'}
+                    </button>
+                </div>
+            `;
+        }
+        
+        // 显示大奖弹窗
+        function showGrandPrizeModal() {
+            document.getElementById('prizeModal').classList.remove('hidden');
+            createConfetti();
+            
+            document.getElementById('addressForm').onsubmit = function(e) {
+                e.preventDefault();
+                alert('🎉 恭喜！您的领奖信息已提交成功！我们将在7个工作日内发货，请保持电话畅通！');
+                document.getElementById('prizeModal').classList.add('hidden');
+            };
+        }
+        
+        // 显示幸运奖弹窗
+        function showLuckyPrizeModal() {
+            document.getElementById('luckyPrizeModal').classList.remove('hidden');
+        }
+        
+        function closeLuckyPrizeModal() {
+            document.getElementById('luckyPrizeModal').classList.add('hidden');
+        }
+        
+        // 创建彩带效果
+        function createConfetti() {
+            const container = document.getElementById('confettiContainer');
+            const colors = ['#ff2d95', '#00f7ff', '#ffd700', '#ff6b6b', '#4ade80', '#a855f7'];
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.position = 'absolute';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-20px';
+                    confetti.style.width = (5 + Math.random() * 10) + 'px';
+                    confetti.style.height = (10 + Math.random() * 20) + 'px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                    container.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 30);
+            }
+        }
+        
+        function createParticles() {
+            const container = document.getElementById('particleContainer');
+            setInterval(() => {
+                if (document.getElementById('gameScreen').classList.contains('hidden')) return;
+                
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.bottom = '0';
+                particle.style.width = '4px';
+                particle.style.height = '4px';
+                particle.style.background = ['#ff2d95', '#00f7ff', '#ffd700'][Math.floor(Math.random() * 3)];
+                container.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 3000);
+            }, 500);
+        }
+        
+        function createSuccessParticles() {
+            const container = document.getElementById('particleContainer');
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = 50 + (Math.random() - 0.5) * 30 + '%';
+                    particle.style.top = '50%';
+                    particle.style.width = '8px';
+                    particle.style.height = '8px';
+                    particle.style.background = '#ffd700';
+                    particle.innerHTML = '✦';
+                    particle.style.fontSize = '20px';
+                    container.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 1500);
+                }, i * 50);
+            }
+        }
+        
+        function createVictoryParticles() {
+            const container = document.getElementById('particleContainer');
+            const colors = ['#ff2d95', '#00f7ff', '#ffd700', '#ff6b6b', '#4ade80'];
+            const emojis = ['✨', '🌟', '💫', '⭐', '🎉', '🎊', '💎'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                    particle.style.fontSize = (15 + Math.random() * 20) + 'px';
+                    particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+                    container.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 3000);
+                }, i * 100);
+            }
+        }
+        
+        // 初始化
+        loadUserData();
     </script>
-  </body>
+</body>
 </html>
