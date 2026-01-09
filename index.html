@@ -398,33 +398,63 @@
                 <p class="text-xs text-gray-500 mt-2" id="winProgressText">再通关 18 次即可获得 PS5 大奖！</p>
             </div>
             
-            <!-- 免费/付费提示 -->
-            <div id="freePlayBadge" class="bg-gradient-to-r from-green-600 to-cyan-600 rounded-xl p-3 mb-6 inline-block">
-                <p class="cyber-font text-white text-lg">🎁 首次免费游玩！</p>
-            </div>
-            <div id="paidPlayBadge" class="hidden bg-gradient-to-r from-pink-600 to-purple-600 rounded-xl p-3 mb-6 inline-block">
-                <p class="cyber-font text-white text-lg">💰 ¥10 / 次</p>
-            </div>
-            
-            <!-- 选择性别/路线 -->
-            <p class="text-gray-400 mb-4">选择你的命运之路</p>
-            <div class="flex flex-col md:flex-row gap-4 justify-center">
-                <button onclick="checkAndStartGame('female')" class="cyber-btn choice-card risky px-8 py-6 rounded-xl group">
-                    <div class="text-4xl mb-2">👩‍🎤</div>
-                    <div class="cyber-font text-pink-400 text-xl group-hover:neon-pink">女团路线</div>
-                    <div class="text-gray-400 text-sm mt-1">成为女王BOSS</div>
-                    <div class="text-pink-500 text-xs mt-2">💋 魅惑 · 野心 · 征服</div>
+            <!-- 开始游戏按钮 -->
+            <div class="flex flex-col items-center gap-4 mb-6">
+                <!-- 免费游玩按钮 -->
+                <button id="freePlayBtn" onclick="showRouteSelection()" class="cyber-btn w-full max-w-sm py-5 rounded-xl bg-gradient-to-r from-green-500 to-cyan-500 text-white text-xl font-bold neon-box-cyan hover:scale-105 transition-transform">
+                    🎁 免费开始游戏
                 </button>
                 
-                <button onclick="checkAndStartGame('male')" class="cyber-btn choice-card px-8 py-6 rounded-xl group">
-                    <div class="text-4xl mb-2">🕺</div>
-                    <div class="cyber-font text-cyan-400 text-xl group-hover:neon-cyan">男团路线</div>
-                    <div class="text-gray-400 text-sm mt-1">成为霸道总裁</div>
-                    <div class="text-cyan-500 text-xs mt-2">🔥 魅力 · 权谋 · 掌控</div>
+                <!-- 已使用免费（置灰） -->
+                <button id="freePlayUsedBtn" class="hidden w-full max-w-sm py-5 rounded-xl bg-gray-700 text-gray-400 text-xl font-bold cursor-not-allowed opacity-60">
+                    ✓ 免费次数已使用
+                </button>
+                
+                <!-- 付费游玩按钮 -->
+                <button id="paidPlayBtn" onclick="showRouteSelection()" class="hidden cyber-btn w-full max-w-sm py-5 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white text-xl font-bold neon-box-pink hover:scale-105 transition-transform">
+                    💰 ¥10 继续挑战
                 </button>
             </div>
             
             <p class="text-gray-600 text-xs mt-8">⚠️ 游戏包含轻微成人暗示内容，适合18岁以上玩家</p>
+        </div>
+        
+        <!-- 路线选择弹窗 -->
+        <div id="routeModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-gradient-to-b from-gray-900 to-black rounded-2xl p-6 max-w-lg w-full border border-cyan-500/50 neon-box-cyan modal-animate">
+                <h2 class="cyber-font text-2xl text-center text-cyan-400 mb-2">🎭 选择你的命运之路</h2>
+                <p class="text-gray-400 text-center text-sm mb-6">不同路线，不同的性感故事</p>
+                
+                <div class="flex flex-col gap-4">
+                    <button onclick="confirmRouteAndStart('female')" class="cyber-btn choice-card risky p-6 rounded-xl group text-left hover:scale-102 transition-transform">
+                        <div class="flex items-center gap-4">
+                            <div class="text-5xl">👩‍🎤</div>
+                            <div class="flex-1">
+                                <div class="cyber-font text-pink-400 text-xl group-hover:neon-pink">女团路线</div>
+                                <div class="text-gray-300 text-sm mt-1">从酒吧新人到女王BOSS的逆袭</div>
+                                <div class="text-pink-500 text-xs mt-2">💋 魅惑 · 野心 · 征服</div>
+                            </div>
+                            <div class="text-2xl text-pink-400">→</div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="confirmRouteAndStart('male')" class="cyber-btn choice-card p-6 rounded-xl group text-left hover:scale-102 transition-transform">
+                        <div class="flex items-center gap-4">
+                            <div class="text-5xl">🕺</div>
+                            <div class="flex-1">
+                                <div class="cyber-font text-cyan-400 text-xl group-hover:neon-cyan">男团路线</div>
+                                <div class="text-gray-300 text-sm mt-1">从调酒师到霸道总裁的崛起</div>
+                                <div class="text-cyan-500 text-xs mt-2">🔥 魅力 · 权谋 · 掌控</div>
+                            </div>
+                            <div class="text-2xl text-cyan-400">→</div>
+                        </div>
+                    </button>
+                </div>
+                
+                <button onclick="closeRouteModal()" class="w-full mt-4 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 transition text-gray-300">
+                    取消
+                </button>
+            </div>
         </div>
         
         <!-- 支付弹窗 -->
@@ -449,7 +479,7 @@
                     <button onclick="closePaymentModal()" class="flex-1 py-3 rounded-xl bg-gray-700 hover:bg-gray-600 transition">
                         取消
                     </button>
-                    <button onclick="processPayment()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 transition cyber-btn">
+                    <button onclick="processPaymentAndShowRoute()" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:opacity-90 transition cyber-btn">
                         💳 立即支付
                     </button>
                 </div>
@@ -584,10 +614,17 @@
                 document.getElementById('winProgressText').textContent = `🎉 已达成通关目标，等待大奖抽取！`;
             }
             
-            // 切换免费/付费标识
+            // 切换免费/付费按钮状态
             if (userData.hasFreePlayed) {
-                document.getElementById('freePlayBadge').classList.add('hidden');
-                document.getElementById('paidPlayBadge').classList.remove('hidden');
+                // 隐藏免费按钮，显示置灰的已使用按钮和付费按钮
+                document.getElementById('freePlayBtn').classList.add('hidden');
+                document.getElementById('freePlayUsedBtn').classList.remove('hidden');
+                document.getElementById('paidPlayBtn').classList.remove('hidden');
+            } else {
+                // 显示免费按钮
+                document.getElementById('freePlayBtn').classList.remove('hidden');
+                document.getElementById('freePlayUsedBtn').classList.add('hidden');
+                document.getElementById('paidPlayBtn').classList.add('hidden');
             }
         }
         
@@ -964,17 +1001,26 @@
         let currentSceneIndex = 0;
         let currentStageIndex = 0;
         
-        // 检查并开始游戏
-        function checkAndStartGame(route) {
-            gameState.pendingRoute = route;
-            
+        // 显示路线选择弹窗
+        function showRouteSelection() {
             if (!userData.hasFreePlayed) {
-                // 第一次免费
-                startGame(route);
+                // 第一次免费，直接显示路线选择
+                document.getElementById('routeModal').classList.remove('hidden');
             } else {
-                // 需要支付
+                // 需要先支付
                 showPaymentModal();
             }
+        }
+        
+        // 关闭路线选择弹窗
+        function closeRouteModal() {
+            document.getElementById('routeModal').classList.add('hidden');
+        }
+        
+        // 确认路线并开始游戏
+        function confirmRouteAndStart(route) {
+            closeRouteModal();
+            startGame(route);
         }
         
         // 显示支付弹窗
@@ -989,11 +1035,12 @@
             document.getElementById('paymentModal').classList.add('hidden');
         }
         
-        // 处理支付（模拟）
-        function processPayment() {
+        // 处理支付后显示路线选择
+        function processPaymentAndShowRoute() {
             // 模拟支付成功
             closePaymentModal();
-            startGame(gameState.pendingRoute);
+            // 支付成功后显示路线选择
+            document.getElementById('routeModal').classList.remove('hidden');
         }
         
         // 开始游戏
