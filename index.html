@@ -395,7 +395,7 @@
                 <div class="h-3 bg-gray-800 rounded-full overflow-hidden">
                     <div class="win-progress h-full rounded-full transition-all duration-500" id="winProgressBar" style="width: 0%"></div>
                 </div>
-                <p class="text-xs text-gray-500 mt-2" id="winProgressText">再通关 18 次即可获得 PS5 大奖！</p>
+                <p class="text-xs text-gray-500 mt-2" id="winProgressText">再通关 3 次即可获得 PS5 大奖！</p>
             </div>
             
             <!-- 开始游戏按钮 -->
@@ -1350,15 +1350,15 @@
             const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
             const minutes = Math.floor(elapsed / 60);
             const seconds = elapsed % 60;
-            const remaining = 18 - userData.totalWins;
+            const remaining = 3 - userData.totalWins;
             
-            // 检查是否获得大奖（达到18次且0.01%概率）
+            // 检查是否获得大奖（达到3次且0.001%概率）
             let grandPrize = false;
             let luckyPrize = false;
             
-            if (userData.totalWins >= 18) {
-                // 0.01%概率
-                if (Math.random() < 0.0001) {
+            if (userData.totalWins >= 3) {
+                // 0.001%概率
+                if (Math.random() < 0.00001) {
                     grandPrize = true;
                 } else if (Math.random() < 0.05) {
                     luckyPrize = true;
@@ -1390,10 +1390,10 @@
                         <div class="flex items-center justify-center gap-4 text-2xl">
                             <span class="cyber-font text-white">${userData.totalWins}</span>
                             <span class="text-gray-500">/</span>
-                            <span class="cyber-font text-yellow-400">18</span>
+                            <span class="cyber-font text-yellow-400">3</span>
                         </div>
                         <div class="h-3 bg-gray-800 rounded-full overflow-hidden mt-3">
-                            <div class="win-progress h-full rounded-full" style="width: ${Math.min((userData.totalWins / 18) * 100, 100)}%"></div>
+                            <div class="win-progress h-full rounded-full" style="width: ${Math.min((userData.totalWins / 3) * 100, 100)}%"></div>
                         </div>
                         ${remaining > 0 ? `
                             <p class="text-gray-400 mt-3">距离 PS5 大奖还需通关 <span class="text-yellow-400 cyber-font">${remaining}</span> 次！</p>
@@ -1422,7 +1422,7 @@
                     
                     <div class="neon-box-gold rounded-xl p-4 bg-black/30 mb-6">
                         <p class="text-yellow-400 text-sm">🎮 继续挑战，PS5 大奖等你来拿！</p>
-                        <p class="text-xs text-gray-500 mt-1">大奖概率: 0.01% | 幸运奖: 霸屏券</p>
+                        <p class="text-xs text-gray-500 mt-1">大奖概率: 0.001% | 幸运奖: 霸屏券</p>
                     </div>
                     
                     <button onclick="location.reload()" class="cyber-btn bg-gradient-to-r from-pink-600 to-purple-600 px-8 py-3 rounded-xl text-lg font-bold hover:opacity-90 neon-box-pink">
@@ -1443,7 +1443,7 @@
             const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
             const minutes = Math.floor(elapsed / 60);
             const seconds = elapsed % 60;
-            const remaining = 18 - userData.totalWins;
+            const remaining = 3 - userData.totalWins;
             
             document.getElementById('resultScreen').innerHTML = `
                 <div class="fade-in-up">
@@ -1453,7 +1453,7 @@
                     
                     <div class="bg-red-900/20 rounded-xl p-4 mb-6 border border-red-500/30">
                         <p class="text-red-400 text-lg mb-2">😢 距离 PS5 大奖还差 <span class="cyber-font text-yellow-400">${remaining}</span> 次通关</p>
-                        <p class="text-gray-400 text-sm">当前进度: ${userData.totalWins} / 18</p>
+                        <p class="text-gray-400 text-sm">当前进度: ${userData.totalWins} / 3</p>
                     </div>
                     
                     <div class="bg-black/50 rounded-xl p-6 mb-6 border border-gray-700">
@@ -1476,7 +1476,7 @@
                     
                     <div class="mb-6 neon-box-gold rounded-xl p-4 bg-black/30">
                         <p class="text-yellow-400 text-sm">🎮 别灰心！PS5 大奖依然在等你！</p>
-                        <p class="text-xs text-gray-500 mt-1">大奖概率: 0.01% | 当前在线: 12,847</p>
+                        <p class="text-xs text-gray-500 mt-1">大奖概率: 0.001% | 当前在线: 12,847</p>
                     </div>
                     
                     <button onclick="location.reload()" class="cyber-btn bg-gradient-to-r from-red-600 to-orange-600 px-8 py-3 rounded-xl text-lg font-bold hover:opacity-90">
