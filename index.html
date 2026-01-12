@@ -297,7 +297,7 @@
             <div class="flex items-center gap-2">
                 <span class="text-gray-400">🎮 通关进度</span>
                 <span class="cyber-font text-green-400" id="winCount">0</span>
-                <span class="text-gray-500">/ 18</span>
+                <span class="text-gray-500">/ 3</span>
             </div>
             
             <!-- 资源 -->
@@ -364,7 +364,7 @@
                 <div class="neon-box-gold rounded-2xl p-4 bg-gradient-to-r from-yellow-900/30 via-yellow-600/20 to-yellow-900/30 border border-yellow-500/50 mt-4">
                     <p class="cyber-font text-yellow-400 text-xl neon-gold">🎮 终极大奖 🎮</p>
                     <p class="text-3xl font-bold mt-2">PlayStation 5 游戏主机</p>
-                    <p class="text-gray-400 mt-2">价值 ¥4,299 | 通关18次即可获得</p>
+                    <p class="text-gray-400 mt-2">价值 ¥4,299 | 通关3次即可获得</p>
                     <p class="text-pink-400 text-sm mt-1">🍀 幸运奖：霸屏券 x1</p>
                 </div>
             </div>
@@ -381,7 +381,7 @@
                 <p class="text-cyan-400 cyber-font mb-2">🔥 实时挑战者</p>
                 <div class="flex justify-center gap-4 text-sm">
                     <span class="text-gray-400">当前在线: <span class="text-white">12,847</span></span>
-                    <span class="text-gray-400">大奖概率: <span class="text-yellow-400">0.01%</span></span>
+                    <span class="text-gray-400">大奖概率: <span class="text-yellow-400">0.001%</span></span>
                     <span class="text-gray-400">历史获奖: <span class="text-green-400">127</span></span>
                 </div>
             </div>
@@ -390,7 +390,7 @@
             <div class="bg-black/50 rounded-xl p-4 mb-6 border border-green-500/30">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-gray-400">🎯 你的通关进度</span>
-                    <span class="cyber-font text-green-400"><span id="userWinCount">0</span> / 18</span>
+                    <span class="cyber-font text-green-400"><span id="userWinCount">0</span> / 3</span>
                 </div>
                 <div class="h-3 bg-gray-800 rounded-full overflow-hidden">
                     <div class="win-progress h-full rounded-full transition-all duration-500" id="winProgressBar" style="width: 0%"></div>
@@ -465,9 +465,9 @@
                 <div class="bg-black/50 rounded-xl p-4 mb-4">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-gray-400">当前进度</span>
-                        <span class="cyber-font text-green-400"><span id="modalWinCount">0</span> / 18</span>
+                        <span class="cyber-font text-green-400"><span id="modalWinCount">0</span> / 3</span>
                     </div>
-                    <p class="text-sm text-gray-400">距离 PS5 大奖还需通关 <span class="text-yellow-400" id="modalRemaining">18</span> 次</p>
+                    <p class="text-sm text-gray-400">距离 PS5 大奖还需通关 <span class="text-yellow-400" id="modalRemaining">3</span> 次</p>
                 </div>
                 
                 <div class="text-center mb-6">
@@ -604,12 +604,16 @@
         // 更新开始界面
         function updateStartScreen() {
             document.getElementById('userWinCount').textContent = userData.totalWins;
-            const progress = (userData.totalWins / 18) * 100;
+            const progress = (userData.totalWins / 3) * 100;
             document.getElementById('winProgressBar').style.width = `${progress}%`;
             
-            const remaining = 18 - userData.totalWins;
+            const remaining = 3 - userData.totalWins;
             if (remaining > 0) {
-                document.getElementById('winProgressText').textContent = `再通关 ${remaining} 次即可获得 PS5 大奖！`;
+                let difficultyHint = '';
+                if (userData.totalWins === 2) {
+                    difficultyHint = ' ⚠️ 最后一关为【地狱难度】！';
+                }
+                document.getElementById('winProgressText').textContent = `再通关 ${remaining} 次即可获得 PS5 大奖！${difficultyHint}`;
             } else {
                 document.getElementById('winProgressText').textContent = `🎉 已达成通关目标，等待大奖抽取！`;
             }
@@ -1026,7 +1030,7 @@
         // 显示支付弹窗
         function showPaymentModal() {
             document.getElementById('modalWinCount').textContent = userData.totalWins;
-            document.getElementById('modalRemaining').textContent = 18 - userData.totalWins;
+            document.getElementById('modalRemaining').textContent = 3 - userData.totalWins;
             document.getElementById('paymentModal').classList.remove('hidden');
         }
         
@@ -1043,16 +1047,30 @@
             document.getElementById('routeModal').classList.remove('hidden');
         }
         
+        // 检查是否为地狱难度（第三次通关尝试）
+        function isHellMode() {
+            return userData.totalWins === 2;
+        }
+        
+        // 获取难度倍率
+        function getDifficultyMultiplier() {
+            if (isHellMode()) {
+                return 3.5; // 地狱难度：风险值乘以3.5倍
+            }
+            return 1;
+        }
+        
         // 开始游戏
         function startGame(route) {
             gameState.route = route;
             gameState.startTime = Date.now();
             gameState.money = route === 'female' ? 50 : 80;
             gameState.reputation = route === 'female' ? 30 : 20;
-            gameState.energy = 100;
+            gameState.energy = isHellMode() ? 70 : 100; // 地狱难度初始精力降低
             gameState.stage = 0;
             gameState.alive = true;
             gameState.perfect = true;
+            gameState.isHellMode = isHellMode();
             currentSceneIndex = 0;
             currentStageIndex = 0;
             
@@ -1071,11 +1089,38 @@
             
             document.getElementById('winCount').textContent = userData.totalWins;
             
+            // 显示地狱难度警告
+            if (gameState.isHellMode) {
+                showHellModeWarning();
+            }
+            
             updateStatus();
             startTimer();
             showScene();
             
             createParticles();
+        }
+        
+        // 显示地狱难度警告
+        function showHellModeWarning() {
+            const warning = document.createElement('div');
+            warning.className = 'fixed inset-0 bg-red-900/80 z-50 flex items-center justify-center';
+            warning.innerHTML = `
+                <div class="text-center modal-animate">
+                    <div class="text-8xl mb-4 heartbeat">👹</div>
+                    <h2 class="cyber-font text-4xl text-red-500 neon-pink mb-4">地狱难度</h2>
+                    <p class="text-xl text-white mb-2">最后一关！成功即可冲击大奖！</p>
+                    <p class="text-gray-300 mb-6">⚠️ 风险提升300%  ⚡ 初始精力-30%</p>
+                    <p class="text-yellow-400 text-sm mb-4">通关概率: 0.001%</p>
+                </div>
+            `;
+            document.body.appendChild(warning);
+            
+            setTimeout(() => {
+                warning.style.transition = 'opacity 0.5s';
+                warning.style.opacity = '0';
+                setTimeout(() => warning.remove(), 500);
+            }, 2500);
         }
         
         // 显示场景
@@ -1112,13 +1157,17 @@
             choicesArea.innerHTML = '';
             
             scene.choices.forEach((choice, index) => {
-                const isRisky = choice.risk > 0.2;
+                // 地狱难度下风险值乘以倍率
+                const actualRisk = Math.min(choice.risk * getDifficultyMultiplier(), 0.95);
+                const isRisky = actualRisk > 0.2;
                 const btn = document.createElement('button');
                 btn.className = `choice-card ${isRisky ? 'risky' : ''} w-full p-4 rounded-xl text-left fade-in-up`;
                 btn.style.animationDelay = `${index * 0.1}s`;
                 
                 let riskLabel = '';
-                if (choice.risk > 0.4) riskLabel = '<span class="text-red-500 text-xs ml-2">⚠️ 极度危险</span>';
+                if (gameState.isHellMode) {
+                    riskLabel = '<span class="text-red-500 text-xs ml-2">🔥 地狱难度</span>';
+                } else if (choice.risk > 0.4) riskLabel = '<span class="text-red-500 text-xs ml-2">⚠️ 极度危险</span>';
                 else if (choice.risk > 0.2) riskLabel = '<span class="text-orange-500 text-xs ml-2">⚡ 高风险</span>';
                 else if (choice.risk > 0.1) riskLabel = '<span class="text-yellow-500 text-xs ml-2">~ 有风险</span>';
                 
